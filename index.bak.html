@@ -1,11 +1,20 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>交互式咖啡知识培训</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <!-- Visualization & Content Choices:
+        - Origin/History: Text, simple timeline (HTML/CSS). Goal: Inform. Method: Static display.
+        - Cherry Structure: Interactive diagram (HTML/CSS/JS hover). Goal: Inform/Organize. Method: Visual breakdown with details on demand.
+        - Varieties: Comparison table (HTML), Radar chart for feature comparison (Chart.js). Goal: Compare. Method: Structured data presentation & visual comparison.
+        - Regions/Flavors: Static map placeholder with clickable areas (HTML/CSS/JS for popups), Radar charts (Chart.js) for flavor profiles. Goal: Organize/Inform/Compare. Method: Geographic context with detailed flavor visualization.
+        - Processing Methods: Tabbed interface (HTML/JS). Goal: Compare/Organize. Method: Segmented information display for easy comparison.
+        - Roast Levels: Visual scale (HTML/CSS/JS click for details). Goal: Inform/Compare. Method: Interactive visual aid.
+        - Tasting/Flavor Wheel: Static image placeholder with JS-powered interactive callouts or clickable segments if possible. Goal: Organize/Inform. Method: Visual reference tool with drill-down capability.
+        CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
         body { font-family: 'Inter', sans-serif; }
         .sidebar {
@@ -24,15 +33,10 @@
             background-color: #78350f; /* amber-800 */
             color: white;
         }
-        .tab-button.active { /* Styles for the active tab */
-            font-weight: 600; /* semibold */
-            border-bottom-width: 2px;
-            border-color: #f59e0b; /* amber-500 for border */
-            color: #a16207; /* yellow-700 for text */
-            background-color: transparent; /* Ensure it's not overriding if previously set */
-        }
-        .tab-button:not(.active):hover {
-            color: #a16207; /* yellow-700 for hover on inactive tabs */
+        .tab-button.active {
+            background-color: #a16207; /* yellow-700 */
+            color: white;
+            border-bottom: 2px solid #f59e0b; /* amber-500 */
         }
         .chart-container {
             position: relative;
@@ -96,7 +100,7 @@
                     <li>如何像专家一样品鉴咖啡，感受其万千风味。</li>
                 </ul>
                 <p>请点击左侧导航栏，开始您的咖啡探索之旅吧！</p>
-                 <img src="https://placehold.co/600x300/f59e0b/422006?text=开启您的咖啡之旅!" alt="咖啡探索之旅欢迎图" class="mt-6 rounded-lg shadow-md mx-auto" onerror="this.src='https://placehold.co/600x300/cccccc/969696?text=图片加载失败'">
+                 <img src="https://placehold.co/600x300/f59e0b/422006?text=开启您的咖啡之旅!" alt="咖啡主题图片" class="mt-6 rounded-lg shadow-md mx-auto" onerror="this.src='https://placehold.co/600x300/cccccc/969696?text=图片加载失败'">
             </div>
 
             <div id="origin-history" class="content-section p-4 bg-white rounded-lg shadow">
@@ -106,7 +110,7 @@
                      <p class="mb-2"><strong class="text-stone-700">起源地：</strong>非洲埃塞俄比亚西部高原地区。</p>
                      <p class="mb-2"><strong class="text-stone-700">起源时间：</strong>约公元6世纪前后。</p>
                      <p class="mb-2"><strong class="text-stone-700">牧羊人的传说：</strong>相传一位名为卡尔代的牧羊人发现他的羊群在吃了一种红色果实后变得异常兴奋。他好奇地尝试后，也感到精神爽快，从而发现了咖啡的提神作用。这是关于咖啡起源最广为人知的故事。</p>
-                     <img src="https://placehold.co/400x250/f3e8d9/4a3b2c?text=牧羊人与咖啡豆" alt="牧羊人卡尔迪与咖啡豆的传说示意图" class="my-4 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/400x250/cccccc/969696?text=图片加载失败'">
+                     <img src="https://placehold.co/400x250/f3e8d9/4a3b2c?text=牧羊人与咖啡豆" alt="牧羊人与咖啡" class="my-4 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/400x250/cccccc/969696?text=图片加载失败'">
                 </div>
 
                 <div class="mb-8">
@@ -177,7 +181,7 @@
                             <button class="mt-4 bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700" onclick="document.getElementById('layer-info-popup').classList.add('hidden')">关闭</button>
                         </div>
                     </div>
-                     <img src="https://placehold.co/500x350/fef3c7/854d0e?text=咖啡果实结构示意图" alt="咖啡果实内部结构图解" class="my-6 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/500x350/cccccc/969696?text=图片加载失败'">
+                     <img src="https://placehold.co/500x350/fef3c7/854d0e?text=咖啡果实结构示意图+(占位符)" alt="咖啡果实结构" class="my-6 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/500x350/cccccc/969696?text=图片加载失败'">
                 </div>
                 
                 <div>
@@ -186,7 +190,7 @@
                     <div class="grid md:grid-cols-3 gap-6 mb-6">
                         <div class="p-4 bg-stone-50 rounded-lg shadow-md">
                             <h4 class="text-xl font-bold text-green-700 mb-2">阿拉比卡 (Arabica)</h4>
-                            <img src="https://placehold.co/300x200/c2f0c2/166534?text=阿拉比卡咖啡豆" alt="阿拉比卡咖啡豆图片" class="w-full h-40 object-cover rounded mb-3" onerror="this.src='https://placehold.co/300x200/cccccc/969696?text=图片加载失败'">
+                            <img src="https://placehold.co/300x200/c2f0c2/166534?text=阿拉比卡咖啡豆" alt="阿拉比卡咖啡豆" class="w-full h-40 object-cover rounded mb-3" onerror="this.src='https://placehold.co/300x200/cccccc/969696?text=图片加载失败'">
                             <p><strong class="text-stone-600">特征：</strong>豆型椭圆细长，中线呈"S"状。</p>
                             <p><strong class="text-stone-600">风味：</strong>酸质优质，花香清新，口感舒适。</p>
                             <p><strong class="text-stone-600">占比：</strong>全球产量的60-70%，风味最佳。</p>
@@ -194,7 +198,7 @@
                         </div>
                         <div class="p-4 bg-stone-50 rounded-lg shadow-md">
                             <h4 class="text-xl font-bold text-orange-700 mb-2">罗布斯塔 (Robusta)</h4>
-                            <img src="https://placehold.co/300x200/ffe4b5/9a3412?text=罗布斯塔咖啡豆" alt="罗布斯塔咖啡豆图片" class="w-full h-40 object-cover rounded mb-3" onerror="this.src='https://placehold.co/300x200/cccccc/969696?text=图片加载失败'">
+                            <img src="https://placehold.co/300x200/ffe4b5/9a3412?text=罗布斯塔咖啡豆" alt="罗布斯塔咖啡豆" class="w-full h-40 object-cover rounded mb-3" onerror="this.src='https://placehold.co/300x200/cccccc/969696?text=图片加载失败'">
                             <p><strong class="text-stone-600">特征：</strong>豆型偏圆，中线呈"1"字形。</p>
                             <p><strong class="text-stone-600">风味：</strong>口感醇厚，油脂丰富，有榛果、谷物味，有时带土味。</p>
                             <p><strong class="text-stone-600">用途：</strong>常用于速溶咖啡、拼配意式豆。</p>
@@ -202,7 +206,7 @@
                         </div>
                         <div class="p-4 bg-stone-50 rounded-lg shadow-md">
                             <h4 class="text-xl font-bold text-yellow-700 mb-2">利比里亚 (Liberica)</h4>
-                             <img src="https://placehold.co/300x200/fffacd/b45309?text=利比里亚咖啡豆" alt="利比里亚咖啡豆图片" class="w-full h-40 object-cover rounded mb-3" onerror="this.src='https://placehold.co/300x200/cccccc/969696?text=图片加载失败'">
+                             <img src="https://placehold.co/300x200/fffacd/b45309?text=利比里亚咖啡豆" alt="利比里亚咖啡豆" class="w-full h-40 object-cover rounded mb-3" onerror="this.src='https://placehold.co/300x200/cccccc/969696?text=图片加载失败'">
                             <p><strong class="text-stone-600">特征：</strong>豆身瘦长，似瓜子，中线呈"1"字形。</p>
                             <p><strong class="text-stone-600">风味：</strong>坚果、黑巧克力厚重感，烟熏味强烈。</p>
                             <p><strong class="text-stone-600">占比：</strong>产量极小，约1%。</p>
@@ -212,7 +216,7 @@
                      <div class="chart-container mx-auto">
                         <canvas id="coffeeVarietyChart"></canvas>
                     </div>
-                    <p class="text-sm text-center mt-2 text-stone-600">图表：主要咖啡品种特性对比</p>
+                    <p class="text-sm text-center mt-2 text-stone-600">图表：主要咖啡品种特性对比 (示意)</p>
                 </div>
             </div>
 
@@ -223,7 +227,7 @@
                 <div class="mb-8">
                     <h3 class="text-2xl font-semibold text-amber-700 mb-3">咖啡带：黄金种植区</h3>
                     <p class="bg-green-50 p-3 rounded-md text-green-800 shadow-sm">咖啡树适宜的种植温度为16-25℃，主要种植在赤道至南北纬25°之间的环状地带，这个区域被称为“咖啡带”。</p>
-                    <img src="https://placehold.co/600x350/d1fae5/065f46?text=世界咖啡带地图" alt="世界咖啡带地图示意图" class="my-4 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/600x350/cccccc/969696?text=图片加载失败'">
+                    <img src="https://placehold.co/600x350/d1fae5/065f46?text=世界咖啡带地图+(占位符)" alt="世界咖啡带地图" class="my-4 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/600x350/cccccc/969696?text=图片加载失败'">
                 </div>
 
                 <div>
@@ -250,8 +254,8 @@
                  <div class="mt-8">
                     <h3 class="text-2xl font-semibold text-amber-700 mb-3">咖啡豆的产季</h3>
                     <p class="mb-2 text-stone-700">咖啡作为农作物，产季因地理位置和品种而异。大部分产区一年一季，少数产区（如哥伦比亚、肯尼亚）一年两季。</p>
-                    <img src="https://placehold.co/600x400/e0e7ff/3730a3?text=咖啡豆产季表" alt="咖啡豆产季表示意图（占位）" class="my-4 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/600x400/cccccc/969696?text=图片加载失败'">
-                    <p class="text-sm text-stone-600">（注：上图为咖啡豆产季表占位符，实际内容请参考具体产区信息。）</p>
+                    <img src="https://placehold.co/600x400/e0e7ff/3730a3?text=咖啡豆产季表+(占位符)" alt="咖啡豆产季表" class="my-4 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/600x400/cccccc/969696?text=图片加载失败'">
+                    <p class="text-sm text-stone-600">（注：上图为咖啡豆产季表占位符，实际内容请参考原始文档中的表格。）</p>
                 </div>
             </div>
 
@@ -260,10 +264,10 @@
                 <p class="mb-6 text-lg">咖啡处理法是将新鲜采摘的咖啡果实转变为可烘焙的咖啡生豆的关键过程。不同的处理方法会赋予咖啡豆截然不同的风味特征。</p>
                 <div class="mb-4 border-b border-stone-300">
                     <nav class="flex space-x-1" aria-label="Tabs" role="tablist">
-                        <button type="button" class="tab-button py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 rounded-t-lg active" id="tab-washed" role="tab" aria-controls="panel-washed" aria-selected="true" data-target="panel-washed">水洗法</button>
-                        <button type="button" class="tab-button py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 rounded-t-lg" id="tab-natural" role="tab" aria-controls="panel-natural" aria-selected="false" data-target="panel-natural">日晒法</button>
-                        <button type="button" class="tab-button py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 rounded-t-lg" id="tab-honey" role="tab" aria-controls="panel-honey" aria-selected="false" data-target="panel-honey">蜜处理</button>
-                        <button type="button" class="tab-button py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 rounded-t-lg" id="tab-special" role="tab" aria-controls="panel-special" aria-selected="false" data-target="panel-special">特殊处理</button>
+                        <button type="button" class="tab-button hs-tab-active:font-semibold hs-tab-active:border-amber-600 hs-tab-active:text-amber-600 py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 hover:text-amber-600 rounded-t-lg active" id="tab-washed" role="tab" data-target="panel-washed">水洗法</button>
+                        <button type="button" class="tab-button hs-tab-active:font-semibold hs-tab-active:border-amber-600 hs-tab-active:text-amber-600 py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 hover:text-amber-600 rounded-t-lg" id="tab-natural" role="tab" data-target="panel-natural">日晒法</button>
+                        <button type="button" class="tab-button hs-tab-active:font-semibold hs-tab-active:border-amber-600 hs-tab-active:text-amber-600 py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 hover:text-amber-600 rounded-t-lg" id="tab-honey" role="tab" data-target="panel-honey">蜜处理</button>
+                        <button type="button" class="tab-button hs-tab-active:font-semibold hs-tab-active:border-amber-600 hs-tab-active:text-amber-600 py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 hover:text-amber-600 rounded-t-lg" id="tab-special" role="tab" data-target="panel-special">特殊处理</button>
                     </nav>
                 </div>
 
@@ -383,7 +387,7 @@
                 <div>
                     <h3 class="text-2xl font-semibold text-stone-700 mb-3">咖啡风味轮 (Coffee Taster’s Flavor Wheel)</h3>
                     <p class="mb-2">咖啡风味轮是一套系统化的咖啡风味描述词汇库，帮助品鉴者更准确地识别和表达咖啡中的各种风味。它通常分为内环（基础风味）、中环（细分风味）和外环（具体风味）。</p>
-                    <img src="https://placehold.co/500x500/fff7ed/92400e?text=咖啡风味轮" alt="咖啡风味轮示意图 (SCA标准)" class="my-4 rounded-lg shadow-lg mx-auto border-4 border-amber-200" onerror="this.src='https://placehold.co/500x500/cccccc/969696?text=图片加载失败'">
+                    <img src="https://placehold.co/500x500/fff7ed/92400e?text=咖啡风味轮+(占位符)" alt="咖啡风味轮" class="my-4 rounded-lg shadow-lg mx-auto border-4 border-amber-200" onerror="this.src='https://placehold.co/500x500/cccccc/969696?text=图片加载失败'">
                     <p class="text-sm text-stone-600">（注：上图为咖啡风味轮占位符。实际的风味轮是一个详细的图表，您可以参考SCA官方发布的版本。使用时，从内环的基础风味向外环逐步细化，来描述您感受到的具体风味。）</p>
                 </div>
             </div>
@@ -435,29 +439,28 @@
             sidebar.classList.toggle('-translate-x-full');
         });
         
+        // Close sidebar when clicking outside on mobile
         document.addEventListener('click', (event) => {
             if (window.innerWidth < 768 && !sidebar.contains(event.target) && !menuToggle.contains(event.target) && !sidebar.classList.contains('-translate-x-full')) {
                 sidebar.classList.add('-translate-x-full');
             }
         });
 
+        // Coffee Cherry Structure Interaction
         function showLayerInfo(name, description) {
             document.getElementById('layer-name').textContent = name;
             document.getElementById('layer-description').textContent = description;
             document.getElementById('layer-info-popup').classList.remove('hidden');
         }
 
+        // Tabs for Processing Methods
         const tabButtons = document.querySelectorAll('.tab-button');
         const tabPanels = document.querySelectorAll('.tab-panel');
 
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
-                tabButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.setAttribute('aria-selected', 'false');
-                });
+                tabButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                button.setAttribute('aria-selected', 'true');
                 
                 const targetPanelId = button.dataset.target;
                 tabPanels.forEach(panel => {
@@ -470,6 +473,7 @@
             });
         });
 
+        // Chart for Coffee Varieties (Example Data)
         const varietyCtx = document.getElementById('coffeeVarietyChart')?.getContext('2d');
         if (varietyCtx) {
             new Chart(varietyCtx, {
@@ -478,20 +482,20 @@
                     labels: ['风味丰富度', '醇厚度', '酸质', '甜感', '咖啡因含量'],
                     datasets: [{
                         label: '阿拉比卡',
-                        data: [4, 3, 4, 3, 2], // Max value is 4
+                        data: [4, 3, 4, 3, 2],
                         fill: true,
-                        backgroundColor: 'rgba(74, 222, 128, 0.2)', 
-                        borderColor: 'rgb(34, 197, 94)', 
+                        backgroundColor: 'rgba(74, 222, 128, 0.2)', // green-400
+                        borderColor: 'rgb(34, 197, 94)', // green-500
                         pointBackgroundColor: 'rgb(34, 197, 94)',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
                         pointHoverBorderColor: 'rgb(34, 197, 94)'
                     }, {
                         label: '罗布斯塔',
-                        data: [2, 4, 1, 2, 4], // Max value is 4
+                        data: [2, 4, 1, 2, 4],
                         fill: true,
-                        backgroundColor: 'rgba(251, 146, 60, 0.2)', 
-                        borderColor: 'rgb(249, 115, 22)', 
+                        backgroundColor: 'rgba(251, 146, 60, 0.2)', // orange-400
+                        borderColor: 'rgb(249, 115, 22)', // orange-500
                         pointBackgroundColor: 'rgb(249, 115, 22)',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
@@ -506,45 +510,35 @@
                       }
                     },
                     plugins: {
-                        legend: { labels: { color: '#44403c' } } 
+                        legend: { labels: { color: '#44403c' } } // stone-700
                     },
                     scales: {
                         r: {
-                            angleLines: { color: '#d6d3d1' }, 
-                            grid: { color: '#e7e5e4' }, 
-                            pointLabels: { font: { size: 12 }, color: '#57534e' }, 
-                            ticks: { 
-                                backdropColor: '#f5f5f4', 
-                                color: '#78716c',
-                                min: 0, // Ensure scale starts at 0
-                                max: 5, // Set a consistent max for comparison (or adjust if data max is higher)
-                                stepSize: 1,
-                                callback: function(value) {
-                                    if (Number.isInteger(value) && value >= 0 && value <= 5) { // Ensure ticks are integers in range
-                                        return value;
-                                    }
-                                    return null; 
-                                }
-                            } 
+                            angleLines: { color: '#d6d3d1' }, // stone-300
+                            grid: { color: '#e7e5e4' }, // stone-200
+                            pointLabels: { font: { size: 12 }, color: '#57534e' }, // stone-600
+                            // ticks: { beginAtZero: true, backdropColor: '#f5f5f4', color: '#78716c', suggestedMin: -0.01, suggestedMax: 5, stepSize: 1 }
+                            ticks: { backdropColor: '#f5f5f4', color: '#78716c' } // stone-100, stone-500
                         }
                     }
                 }
             });
-        }
-
+        
+}
+        // Chart for Region Flavors
         const regionFlavorCtx = document.getElementById('regionFlavorChart')?.getContext('2d');
         let regionFlavorChart;
         const regionFlavorData = {
             americas: {
-                data: [3, 4, 3, 4, 3], 
+                data: [3, 4, 3, 4, 3], // 醇厚, 坚果, 平衡酸, 焦糖甜, 清洁余韵 (示例数值)
                 description: "美洲产区：通常具有均衡的风味，带有坚果、巧克力、焦糖的甜感，酸度适中，口感柔和顺滑。"
             },
             africa: {
-                data: [3, 2, 5, 4, 4], 
+                data: [3, 2, 5, 4, 4], // 中等醇厚, 花香, 明亮果酸, 果香甜, 复杂余韵
                 description: "非洲产区：以其明亮活泼的酸质和复杂多样的香气著称，常带有花香、果香（如柑橘、莓果）以及类似红酒的风味。"
             },
             asia: {
-                data: [5, 4, 2, 2, 3], 
+                data: [5, 4, 2, 2, 3], // 醇厚浓郁, 草本/木质, 低酸, 土壤/香料甜, 持久余韵
                 description: "亚洲产区：咖啡风味浓郁厚重，酸度较低，常带有泥土、草本、香料、木质等独特风味，口感扎实。"
             }
         };
@@ -567,7 +561,7 @@
                             label: document.querySelector(`.region-button[data-region="${regionKey}"]`).textContent,
                             data: selectedRegion.data,
                             fill: true,
-                            backgroundColor: 'rgba(161, 98, 7, 0.2)', 
+                            backgroundColor: 'rgba(161, 98, 7, 0.2)', // yellow-700
                             borderColor: 'rgb(161, 98, 7)',
                             pointBackgroundColor: 'rgb(161, 98, 7)',
                             pointBorderColor: '#fff',
@@ -585,17 +579,13 @@
                                 angleLines: { color: '#d6d3d1' }, 
                                 grid: { color: '#e7e5e4' }, 
                                 pointLabels: { font: { size: 12 }, color: '#57534e' }, 
-                                ticks: { 
-                                    backdropColor: '#f5f5f4', 
-                                    color: '#78716c', 
-                                    min: 0, 
-                                    max: 5, 
-                                    stepSize: 1,
-                                    callback: function(value) {
-                                        if (Number.isInteger(value) && value >= 0 && value <= 5) {
-                                            return value;
-                                        }
-                                        return null; 
+                                ticks: { backdropColor: '#f5f5f4', color: '#78716c', Min: 0, Max: 5, stepSize: 1,
+                                callback: function(value) {
+                                    // 确保刻度值是整数，并且在0到5的范围内
+                                    if (Number.isInteger(value) && value >= 0 && value <= 5) {
+                                        return value;
+                                    }
+                                    return null; // 不显示非整数或超出范围的刻度
                                     }
                                 } 
                             }
@@ -610,13 +600,8 @@
                 createOrUpdateRegionChart(button.dataset.region);
             });
         });
-        
-        if (document.querySelector('.region-button[data-region="americas"]')) {
-             createOrUpdateRegionChart('americas'); // Initialize with Americas data if the button exists
-        } else if (regionFlavorCtx) { // Fallback if no buttons exist but canvas does (e.g. to show empty chart or default)
-            // Optionally, initialize with a default state or leave blank
-            console.warn("Region buttons not found, regionFlavorChart might not initialize with data.");
-        }
+        // Initialize with Americas data
+        createOrUpdateRegionChart('americas');
 
     </script>
 </body>
