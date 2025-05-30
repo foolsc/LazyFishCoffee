@@ -576,6 +576,8 @@
                         }]
                     },
                     options: {
+                         min: 0,
+                         max: 5,
                          responsive: true,
                          maintainAspectRatio: false,
                          elements: { line: { borderWidth: 3 } },
@@ -588,8 +590,6 @@
                                 ticks: { 
                                     backdropColor: '#f5f5f4', 
                                     color: '#78716c', 
-                                    min: 0, 
-                                    max: 5, 
                                     stepSize: 1,
                                     callback: function(value) {
                                         if (Number.isInteger(value) && value >= 0 && value <= 5) {
