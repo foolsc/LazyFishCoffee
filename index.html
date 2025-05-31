@@ -3,90 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>交互式咖啡知识培训</title>
+    <title>咖啡知识培训</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Inter', sans-serif; }
-        .sidebar {
-            transition: transform 0.3s ease-in-out;
+        /* Chosen Palette: Nature's Elegance - Base: #FDFDFD (light cream), Text: #333333 (dark charcoal), Accent 1: #6B8E23 (olive green), Accent 2: #DAA520 (goldenrod) */
+        /* Application Structure Plan: Single-page application with a fixed sidebar navigation for thematic sections (Welcome, History, Cherry Structure, Processing, Varieties, Regions, Flavor, Roasting, Brewing). Content is presented in clean, card-like sections with generous spacing and subtle shadows. Interactive elements include clickable cherry parts for detail popups, tabbed content for processing methods, and radar charts for variety and regional flavor comparisons. This structure enhances user understanding by breaking down complex information into digestible, aesthetically pleasing modules, facilitating intuitive exploration and progressive learning, inspired by the elegant and natural feel of the reference website. */
+        /* Visualization & Content Choices:
+            - Welcome: Introductory text with a call-to-action button. Goal: Inform. Method: Textual presentation.
+            - History: Textual narrative with bullet points for key milestones. Goal: Inform. Method: Structured text.
+            - Cherry Structure: Interactive diagram (HTML/CSS/JS hover/click for popups). Goal: Inform/Organize. Method: Visual breakdown with on-demand textual details.
+            - Processing Methods: Tabbed interface (HTML/JS) for different methods. Goal: Compare/Organize. Method: Segmented information display for easy comparison.
+            - Varieties: Textual descriptions for Arabica and Robusta, complemented by a Radar chart (Chart.js) for feature comparison. Goal: Compare/Inform. Method: Structured text with visual data comparison.
+            - Regions/Flavors: Textual overview, interactive buttons to select regions, and a dynamic Radar chart (Chart.js) to visualize flavor profiles. Goal: Organize/Inform/Compare. Method: Geographic context with detailed, interactive flavor visualization.
+            - Flavor (Tasting): Textual breakdown of tasting dimensions (aroma, acidity, sweetness, body, aftertaste). Goal: Inform. Method: Structured text.
+            - Roasting: Textual explanation of roasting stages and degrees. Goal: Inform. Method: Structured text.
+            - Brewing: Textual descriptions of various brewing methods with placeholder images. Goal: Inform. Method: Structured text with visual cues.
+            CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. */
+
+        body { 
+            font-family: 'Montserrat', sans-serif; /* Main body font */
+            background-color: #FDFDFD; /* Light cream background */
+            color: #333333; /* Dark charcoal text */
+            line-height: 1.6; /* Improved readability */
         }
+        h1, h2, h3, h4 {
+            font-family: 'Playfair Display', serif; /* Elegant serif for headings */
+            color: #2C3E50; /* Deep charcoal for headings */
+            font-weight: 700; /* Bold headings */
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            transition: transform 0.4s ease-in-out, background-color 0.4s ease;
+            background-color: #362C27; /* Rich dark brown/charcoal */
+            box-shadow: 4px 0 20px rgba(0,0,0,0.25); /* Deeper shadow */
+        }
+        .nav-link {
+            transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+            color: #E0E0E0; /* Light gray for links */
+            border-radius: 8px;
+            margin-bottom: 10px; /* More spacing */
+            padding: 12px 16px; /* Larger clickable area */
+        }
+        .nav-link.active, .nav-link:hover {
+            background-color: #4A3E38; /* Slightly lighter brown/charcoal on hover/active */
+            color: #DAA520; /* Goldenrod accent for active/hover */
+            transform: translateX(8px); /* More pronounced slide effect */
+        }
+        .nav-link svg {
+            color: #95A5A6; /* Default icon color */
+            transition: color 0.2s ease;
+        }
+        .nav-link.active svg, .nav-link:hover svg {
+            color: #DAA520; /* Goldenrod icon on active/hover */
+        }
+
+        /* Main Content Sections */
         .content-section {
             display: none;
+            background-color: #ffffff; /* Clean white background for content cards */
+            border-radius: 16px; /* Larger, softer rounded corners */
+            box-shadow: 0 8px 30px rgba(0,0,0,0.1); /* More pronounced, softer shadow */
+            padding: 3rem; /* Generous padding */
+            margin-bottom: 2.5rem; /* Increased bottom margin */
+            animation: fadeIn 0.6s ease-out forwards; /* Fade-in animation */
         }
         .content-section.active {
             display: block;
         }
-        .nav-link {
-            transition: background-color 0.2s ease, color 0.2s ease;
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
-        .nav-link.active, .nav-link:hover {
-            background-color: #78350f; /* amber-800 */
+
+        /* Primary Button Style */
+        .primary-button {
+            background: linear-gradient(135deg, #DAA520, #B8860B); /* Goldenrod gradient */
             color: white;
+            padding: 14px 32px; /* Larger button */
+            border-radius: 30px; /* Pill shape */
+            font-weight: 600;
+            letter-spacing: 0.05em; /* Slight letter spacing */
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 15px rgba(218,165,32,0.4); /* Goldenrod shadow */
+            text-transform: uppercase; /* Uppercase text */
         }
-        .tab-button.active { /* Styles for the active tab */
-            font-weight: 600; /* semibold */
-            border-bottom-width: 2px;
-            border-color: #f59e0b; /* amber-500 for border */
-            color: #a16207; /* yellow-700 for text */
-            background-color: transparent; /* Ensure it's not overriding if previously set */
+        .primary-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(218,165,32,0.6);
         }
-        .tab-button:not(.active):hover {
-            color: #a16207; /* yellow-700 for hover on inactive tabs */
+        
+        /* Region Button Style (for Radar Chart selection) */
+        .region-button {
+            background-color: #E0E0E0; /* Light gray */
+            color: #555555; /* Darker gray text */
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            border: 1px solid #D0D0D0; /* Subtle border */
         }
+        .region-button:hover {
+            background-color: #D0D0D0;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+        }
+        .region-button.active {
+            background-color: #6B8E23; /* Olive green accent */
+            color: white;
+            box-shadow: 0 4px 12px rgba(107,142,35,0.4); /* Olive green shadow */
+            border-color: #6B8E23;
+            transform: translateY(-1px);
+        }
+
+        /* Tab Button Style (for Processing Methods) */
+        .tab-button {
+            padding: 14px 24px;
+            font-weight: 600;
+            color: #7F8C8D; /* Soft gray */
+            border-bottom: 3px solid transparent; /* Thicker border */
+            transition: all 0.3s ease;
+            text-transform: uppercase; /* Uppercase text */
+            letter-spacing: 0.03em;
+        }
+        .tab-button:hover {
+            color: #2C3E50; /* Darker text on hover */
+            border-color: #B0B0B0; /* Subtle border on hover */
+        }
+        .tab-button.active {
+            font-weight: 700;
+            border-color: #DAA520; /* Goldenrod accent border */
+            color: #DAA520; /* Goldenrod text */
+            background-color: #FCFCFC; /* Slightly lighter background */
+            box-shadow: inset 0 -2px 8px rgba(0,0,0,0.05); /* Subtle inner shadow */
+        }
+        .tab-panel {
+            background-color: #FCFCFC;
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.05); /* More pronounced inner shadow */
+        }
+
+        /* Coffee Cherry Interactive Parts */
+        .coffee-cherry-part {
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            border: 2px solid rgba(255,255,255,0.5); /* Subtle white border */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .coffee-cherry-part:hover {
+            transform: scale(1.1); /* More prominent scale */
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            background-color: rgba(107,142,35,0.3); /* Olive green tint on hover */
+        }
+        .popup-overlay {
+            background-color: rgba(0,0,0,0.7); /* Darker overlay */
+        }
+        .popup-content {
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 35px rgba(0,0,0,0.4);
+            padding: 3rem;
+        }
+
+        /* Chart Container Styling */
         .chart-container {
             position: relative;
+            height: 450px; /* Increased height for better visual impact */
             width: 100%;
-            max-width: 500px;
-            margin-left: auto;
-            margin-right: auto;
-            height: 300px;
-            max-height: 350px;
+            padding: 1.5rem;
+            background-color: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+            display: flex; /* Use flex to center canvas */
+            justify-content: center;
+            align-items: center;
         }
-        @media (min-width: 768px) {
-            .chart-container {
-                height: 350px;
-                max-height: 400px;
-            }
-        }
-        .coffee-cherry-layer {
-            transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
-            cursor: pointer;
-        }
-        .coffee-cherry-layer:hover {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        .chart-container canvas {
+            max-width: 100%;
+            max-height: 100%;
         }
     </style>
 </head>
-<body class="bg-stone-100 text-stone-800">
-    <div class="flex h-screen overflow-hidden">
-        <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 z-30 w-64 bg-stone-800 text-white p-4 transform -translate-x-full md:translate-x-0 md:static md:inset-0 shadow-lg">
-            <h1 class="text-2xl font-bold mb-6 text-amber-400">咖啡知识导航</h1>
-            <nav id="navigation">
-                <a href="#welcome" class="nav-link block py-2.5 px-4 rounded mb-2 hover:bg-amber-700">欢迎</a>
-                <a href="#origin-history" class="nav-link block py-2.5 px-4 rounded mb-2 hover:bg-amber-700">咖啡之旅</a>
-                <a href="#bean-basics" class="nav-link block py-2.5 px-4 rounded mb-2 hover:bg-amber-700">认识咖啡豆</a>
-                <a href="#coffee-lands" class="nav-link block py-2.5 px-4 rounded mb-2 hover:bg-amber-700">咖啡的家园</a>
-                <a href="#processing-methods" class="nav-link block py-2.5 px-4 rounded mb-2 hover:bg-amber-700">从果实到生豆</a>
-                <a href="#roasting-magic" class="nav-link block py-2.5 px-4 rounded mb-2 hover:bg-amber-700">烘焙的魔法</a>
-                <a href="#coffee-composition" class="nav-link block py-2.5 px-4 rounded mb-2 hover:bg-amber-700">咖啡的内涵</a>
-                <a href="#tasting-coffee" class="nav-link block py-2.5 px-4 rounded mb-2 hover:bg-amber-700">品味咖啡</a>
-            </nav>
-        </aside>
+<body class="bg-gray-100 flex flex-col md:flex-row min-h-screen">
+    <aside id="sidebar" class="sidebar fixed inset-y-0 left-0 w-64 bg-stone-900 text-white p-6 transform -translate-x-full md:relative md:translate-x-0 z-40">
+        <div class="text-3xl font-bold mb-8 text-center text-amber-300">咖啡指南</div>
+        <nav id="navigation">
+            <a href="#welcome" class="nav-link flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m0 0l7 7m-1.5-1.5V12"></path></svg>
+                欢迎
+            </a>
+            <a href="#history" class="nav-link flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                起源与历史
+            </a>
+            <a href="#cherry" class="nav-link flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                咖啡樱桃结构
+            </a>
+            <a href="#processing" class="nav-link flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.568.344 1.136.678 1.724 1.066z"></path></svg>
+                处理方法
+            </a>
+            <a href="#varieties" class="nav-link flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M17 16l-4-4"></path></svg>
+                咖啡品种
+            </a>
+            <a href="#regions" class="nav-link flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2h7a2 2 0 002-2v-1a2 2 0 012-2h2.945M19 7v4m-5 0h-4m-2 4h.01M7 16h.01"></path></svg>
+                咖啡产区
+            </a>
+            <a href="#flavor" class="nav-link flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h1M3 12H2m15.364 6.364l-.707.707M6.343 6.343l-.707-.707m12.728 0l-.707-.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path></svg>
+                风味品鉴
+            </a>
+            <a href="#roasting" class="nav-link flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path></svg>
+                咖啡烘焙
+            </a>
+            <a href="#brewing" class="nav-link flex items-center">
+                <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 4.016M12 18.288l-3.042 2.308M12 18.288L9.042 20.596M12 18.288L15 20.596M12 18.288L15.042 20.596"></path></svg>
+                咖啡冲煮
+            </a>
+        </nav>
+    </aside>
 
-        <main class="flex-1 overflow-y-auto p-6 md:p-10">
-            <button id="menu-toggle" class="md:hidden fixed top-4 right-4 z-40 bg-amber-700 text-white p-2 rounded-md">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-                </svg>
-            </button>
+    <main class="flex-1 p-6 md:p-10 relative">
+        <button id="menu-toggle" class="md:hidden fixed top-4 left-4 bg-stone-800 text-white p-2 rounded-md z-50">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+        </button>
 
-            <div id="welcome" class="content-section p-4 bg-white rounded-lg shadow">
-                <h2 class="text-3xl font-semibold text-amber-700 mb-4">欢迎来到交互式咖啡知识培训</h2>
-                <p class="text-lg mb-4">您好！欢迎加入探索奇妙咖啡世界的旅程。本应用旨在通过互动和可视化的方式，帮助您轻松掌握咖啡的核心知识，从一颗小小的咖啡豆到杯中香醇的饮品，每一步都充满奥秘。</p>
-                <p class="mb-2">在这里，您可以了解到：</p>
-                <ul class="list-disc list-inside mb-4 space-y-1 text-stone-700">
+        <section id="welcome" class="content-section active">
+            <h2 class="text-4xl font-bold text-center mb-8">欢迎来到咖啡知识培训</h2>
+            <div class="text-lg leading-relaxed text-gray-700 max-w-3xl mx-auto">
+                <p class="mb-4">
+                    欢迎加入咖啡的世界！本培训旨在帮助您快速了解咖啡的基础知识，让您更好地融入我们的团队。
+                </p>
+                <p class="mb-4">
+                    在这里，您可以了解到：
+                </p>
+                <ul class="list-disc list-inside mb-4 space-y-1 text-gray-700">
                     <li>咖啡悠久的历史与有趣的起源故事。</li>
                     <li>咖啡豆的精细结构和不同品种的独特魅力。</li>
                     <li>全球主要咖啡产区的风土人情与风味特色。</li>
@@ -96,299 +255,434 @@
                     <li>如何像专家一样品鉴咖啡，感受其万千风味。</li>
                 </ul>
                 <p>请点击左侧导航栏，开始您的咖啡探索之旅吧！</p>
-                 <img src="https://placehold.co/600x300/f59e0b/422006?text=开启您的咖啡之旅!" alt="咖啡探索之旅欢迎图" class="mt-6 rounded-lg shadow-md mx-auto" onerror="this.src='https://placehold.co/600x300/cccccc/969696?text=图片加载失败'">
+            </div>
+            <div class="mt-10 text-center">
+                <a href="#history" class="primary-button inline-block">
+                    开始探索
+                </a>
+            </div>
+            <div class="mt-12 flex justify-center">
+                <img src="coffee001" alt="咖啡豆背景图" class="rounded-lg shadow-xl max-w-full h-auto">
+            </div>
+        </section>
+
+        <section id="history" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-stone-800 mb-6">咖啡的起源与历史</h2>
+            <div class="text-lg leading-relaxed text-gray-700">
+                <h3 class="text-2xl font-semibold text-stone-700 mb-4">咖啡的起源</h3>
+                <p class="mb-4">
+                    咖啡的发源地是非洲埃塞俄比亚西部的高原地区，也是咖啡的原产地，起源时间大约在公元6世纪前后。
+                </p>
+                <div class="flex justify-center mb-6">
+                    <img src="https://placehold.co/700x400/E8E8E8/333333?text=牧羊人与咖啡" alt="咖啡起源地图" class="rounded-lg shadow-md max-w-full h-auto">
+                </div>
+                <h3 class="text-2xl font-semibold text-stone-700 mb-4">牧羊人的故事</h3>
+                <p class="mb-4">
+                    根据罗马一位语言学家罗士德 奈洛伊（1613-1707）的记载：大约纪元六世纪时，有位阿拉伯牧羊人卡尔代某日赶羊到伊索比亚草原放牧时，看到每只山羊都显得无比兴奋，雀跃不已，他觉得很奇怪，后来经过细心观察发现，这些羊群是吃了某种红色果实才会兴奋不已，卡尔代好奇地尝了一些，发觉这些果实非常香甜美味，食用后自己也觉得精神非常爽快，从此他就时常赶着羊群一同去吃这种美味果实。
+                </p>
+                <h3 class="text-2xl font-semibold text-stone-700 mb-4">咖啡的历史</h3>
+                <ul class="list-disc pl-8 mb-6 space-y-3">
+                    <li class="mb-2"><strong>11世纪</strong>：咖啡豆从非洲穿过红海，到了亚洲也门，阿拉伯人发明用水煮咖啡，由此诞生了世界第一杯咖啡。</li>
+                    <li class="mb-2"><strong>16世纪</strong>：咖啡来到了横跨亚欧大陆的土耳其，并在那里诞生了最早咖啡的雏形，100年后，威尼斯诞生了欧洲第一家街头咖啡馆。</li>
+                    <li class="mb-2"><strong>17世纪</strong>：一位叫科尔奇斯基的维也纳人用土耳其人留下的咖啡豆开设了维也纳第一家咖啡馆，并发明了拿铁咖啡，由此风靡欧洲。</li>
+                    <li class="mb-2"><strong>18世纪</strong>：荷兰和法国分别把咖啡豆带到了更适合种植的热带南美洲，催生了世界最大咖啡豆产国巴西。</li>
+                    <li class="mb-2"><strong>如今</strong>：咖啡已经成为了全球最受欢迎的饮品之一。</li>
+                </ul>
+                <h3 class="text-2xl font-semibold text-stone-700 mb-4">咖啡的传播史</h3>
+                <p class="mb-4">
+                    埃塞俄比亚→也门→土耳其→欧洲→印度→意大利→荷兰→斯里兰卡→印度尼西亚→英国→法国→马提尼亚→圭亚那→哥伦比亚→巴西
+                </p>
+                <h3 class="text-2xl font-semibold text-stone-700 mb-4">各国家对咖啡的“称呼”</h3>
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-gray-700">
+                    <p>土耳其语：Kahve</p>
+                    <p>法语：Café</p>
+                    <p>西班牙语：Kape</p>
+                    <p>意大利语：Caffe</p>
+                    <p>荷兰语：Kope</p>
+                    <p>希腊语：Kafe</p>
+                    <p>俄语：Kophe</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="cherry" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-stone-800 mb-6">咖啡豆来源及结构</h2>
+            <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                咖啡豆来自于咖啡树（属于茜草科）结的果实，又称‘咖啡樱桃’的果核。咖啡鲜果结构分为外果皮、果肉、果胶、羊皮纸（果壳）、银皮、果核（咖啡豆）、胚芽。点击图片中的不同部分，了解其详细信息。
+            </p>
+            <div class="flex justify-center items-center mb-8 relative" style="height: 450px;">
+                <img src="https://placehold.co/450x450/E0E0E0/333333?text=咖啡果实结构图" alt="咖啡樱桃结构图" class="max-w-full h-auto rounded-lg shadow-xl">
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 100px; height: 100px; top: 80px; left: 100px;" 
+                     onclick="showLayerInfo('外果皮 (Outer Skin)', '外果皮就是整颗咖啡果实里，最靠外边的物质了。它由1-2层细胞构成，结构与生物表皮十分相似，具有角质层和气孔。当咖啡果实还没有成熟前，果皮的薄壁稀薄会含有大量的叶绿体，然后待到果实成熟时，会转变为有色体，颜色从原来的青绿渐渐转变为红色。果实越熟，颜色越深。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 90px; height: 90px; top: 120px; left: 180px;" 
+                     onclick="showLayerInfo('果肉 (Pulp/Mesocarp)', '咖啡果肉是属于果皮的一部分，因为它是由植物的子房壁发育出来的。而咖啡果肉含有大量的糖分及酸类物质，人们常说的咖啡嚼起来很甜，说的就是来自果皮和果肉提供的糖分。但由于它和果皮一样，非常薄，所以初尝咖啡果的朋友很容易一口就咬到咖啡豆上。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 80px; height: 80px; top: 160px; left: 260px;" 
+                     onclick="showLayerInfo('果胶层 (Pectin layer/Mucilage)', '当移除了果皮果肉以后，可以在咖啡豆上看到一层透明的黏状物，这就是果胶层。果胶层难溶于水，且因为它的含糖量最高，所以触感黏腻，且易氧化，在将咖啡果肉移除的短暂几分钟里，果胶就会由透明逐渐转为黄色。果胶层是处理发酵时重要的组成部分，以蜜处理为例，果胶保留越多，参与发酵的物质就越多，这会让咖啡豆获得更高的甜感、酵感。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 70px; height: 70px; top: 200px; left: 340px;" 
+                     onclick="showLayerInfo('羊皮纸 (Parchment coat)', '咖啡豆外表会附有一层羊皮纸，这是由薄壁细胞组成的。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 60px; height: 60px; top: 240px; left: 420px;" 
+                     onclick="showLayerInfo('银皮 (Silver skin/Chaff)', '银皮夹杂在羊皮层和咖啡豆之间，是一层薄如蝉翼的细胞质膜。它会在咖啡豆处理、烘焙时进行脱落。它也是区别日晒、水洗处理咖啡豆的一大特征。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 50px; height: 50px; top: 280px; left: 500px;" 
+                     onclick="showLayerInfo('果核/咖啡豆 (Bean/Endosperm)', '咖啡豆既是咖啡的制作原材料，同时还是咖啡树的种子。通常来说，一颗咖啡果实会孕育出两颗咖啡豆，它们有一面是平坦的，会相贴在一起。值得注意的是，如果咖啡果实在生长过程中，出现了发育不良的情况，很有可能只会孵化出一颗没有平面的椭圆形咖啡豆。为了将这两种不同的情况区别开来，于是人们便将没有平面的圆形豆子称之为：圆豆/珠粒；正常孵化出来且带有平面的豆子则被称为：扁豆/平豆。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 40px; height: 40px; top: 320px; left: 580px;" 
+                     onclick="showLayerInfo('芽胚 (Center cut)', '咖啡豆中间裂开的地方属于胚芽部分，突破咖啡种子的皮后会发育成叶和茎。')"></div>
             </div>
 
-            <div id="origin-history" class="content-section p-4 bg-white rounded-lg shadow">
-                <h2 class="text-3xl font-semibold text-amber-700 mb-6">咖啡之旅：起源与历史</h2>
-                <div class="mb-8 p-4 border-l-4 border-amber-600 bg-amber-50 rounded-md">
-                     <h3 class="text-2xl font-semibold text-amber-700 mb-3">咖啡的摇篮：埃塞俄比亚</h3>
-                     <p class="mb-2"><strong class="text-stone-700">起源地：</strong>非洲埃塞俄比亚西部高原地区。</p>
-                     <p class="mb-2"><strong class="text-stone-700">起源时间：</strong>约公元6世纪前后。</p>
-                     <p class="mb-2"><strong class="text-stone-700">牧羊人的传说：</strong>相传一位名为卡尔代的牧羊人发现他的羊群在吃了一种红色果实后变得异常兴奋。他好奇地尝试后，也感到精神爽快，从而发现了咖啡的提神作用。这是关于咖啡起源最广为人知的故事。</p>
-                     <img src="https://placehold.co/400x250/f3e8d9/4a3b2c?text=牧羊人与咖啡豆" alt="牧羊人卡尔迪与咖啡豆的传说示意图" class="my-4 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/400x250/cccccc/969696?text=图片加载失败'">
+            <div id="layer-info-popup" class="popup-overlay hidden fixed inset-0 flex items-center justify-center z-50">
+                <div class="popup-content bg-white p-10 rounded-lg max-w-lg w-full text-center relative">
+                    <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-light" onclick="document.getElementById('layer-info-popup').classList.add('hidden');">&times;</button>
+                    <h3 id="layer-name" class="text-3xl font-bold mb-4 text-stone-800"></h3>
+                    <p id="layer-description" class="text-gray-700 text-lg leading-relaxed"></p>
+                </div>
+            </div>
+        </section>
+
+        <section id="processing" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-stone-800 mb-6">咖啡生豆处理方式</h2>
+            <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                咖啡处理法，就是把咖啡果实变成咖啡生豆的过程。咖啡处理法的本质就是借助发酵分解的过程，为咖啡豆添加更多的风味。这些年随着咖啡的发展，各种新颖的处理法层出不穷。可是日晒、水洗、蜜处理三大传统处理法依然无法被取代，核心是他们代表了咖啡最朴素自然的味道。
+            </p>
+
+            <div class="bg-white p-8 rounded-lg shadow-md mb-8">
+                <div class="flex border-b border-gray-200 mb-6">
+                    <button class="tab-button active flex-1 text-center" data-target="dry-process">日晒处理法</button>
+                    <button class="tab-button flex-1 text-center" data-target="wet-process">水洗处理法</button>
+                    <button class="tab-button flex-1 text-center" data-target="honey-process">蜜处理法</button>
+                    <button class="tab-button flex-1 text-center" data-target="special-process">特殊及新奇处理法</button>
                 </div>
 
-                <div class="mb-8">
-                    <h3 class="text-2xl font-semibold text-amber-700 mb-4">咖啡的历史年轮</h3>
-                    <ul class="space-y-3">
-                        <li class="p-3 bg-stone-50 rounded-md shadow-sm"><strong class="text-green-700">11世纪：</strong>咖啡豆从非洲跨越红海到达亚洲也门，阿拉伯人开始用水煮咖啡，诞生了世界上第一杯咖啡。</li>
-                        <li class="p-3 bg-stone-50 rounded-md shadow-sm"><strong class="text-green-700">16世纪：</strong>咖啡传入土耳其，形成了早期咖啡的雏形。约100年后，欧洲第一家街头咖啡馆在威尼斯开业。</li>
-                        <li class="p-3 bg-stone-50 rounded-md shadow-sm"><strong class="text-green-700">17世纪：</strong>维也纳人科尔奇斯基利用土耳其人留下的咖啡豆开设了维也纳第一家咖啡馆，并创新地发明了拿铁咖啡，咖啡文化由此风靡欧洲。</li>
-                        <li class="p-3 bg-stone-50 rounded-md shadow-sm"><strong class="text-green-700">18世纪：</strong>荷兰和法国将咖啡豆带到更适宜种植的热带南美洲，这直接催生了巴西成为世界上最大的咖啡豆生产国。</li>
-                        <li class="p-3 bg-stone-50 rounded-md shadow-sm"><strong class="text-green-700">如今：</strong>咖啡已成为全球最受欢迎的饮品之一，融入了世界各地的文化与生活。</li>
+                <div id="dry-process" class="tab-panel">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">日晒处理法 (Natural/Dry Process)</h3>
+                    <p class="text-gray-700 mb-4">
+                        日晒也是现存最传统的处理方法。自然日晒法要求当地气候极为干燥，晒豆时间视天气而定，大约两到四周，直到干燥。此时的咖啡果变为深褐色，含水率在12%。在日晒之后，咖啡果皮会变得容易脱落，再用专门的咖啡脱壳机去除表层的外壳。
+                    </p>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">加工过程</h4>
+                    <p class="text-gray-700 mb-4">步骤：筛选—（整粒咖啡果）干燥—脱壳储存</p>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2 mb-4">
+                        <li><strong>浮选</strong>：将采摘的咖啡樱桃放入大水槽筛除浮豆。</li>
+                        <li><strong>干燥</strong>：将成熟的咖啡樱桃直接铺放在露天的日晒场，进行暴晒干燥，使含水率控制在9~12%。一般时间为2-4周，期间需要仔细观察，时不时翻动咖啡豆，以免干燥不均匀、发酵过度带来的异味。</li>
+                        <li><strong>脱壳储存</strong>：将干燥好的咖啡豆用脱壳机去除果皮、果肉、羊皮纸，再分筛包装储存好。</li>
+                    </ul>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">口感</h4>
+                    <p class="text-gray-700 mb-4">
+                        风味复杂，多半有酒香，果味浓，醇厚度高。更多的果肉果胶参与发酵，带来更高的醇厚度和甜感，相反酸质方面会较低。晾晒前进行过厌氧发酵的咖啡鲜果，还会带来更重的发酵酒香。
+                    </p>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">优缺点</h4>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2">
+                        <li><strong>优点</strong>：处理过程简单，无需复杂设备。保存风味较多、拥有较好的甜度与水果风味。节约水资源。</li>
+                        <li><strong>缺点</strong>：处理时间长、对人力、场地需求大。对天气要求比较高。在日晒过程中，因为完整果肉果胶的存在，在翻晒豆子的过程中，容易出现发霉腐坏的情况，所以整体风味走向更不可控。也容易出现较重的酵感。</li>
                     </ul>
                 </div>
-                <div class="mb-8">
-                     <h3 class="text-2xl font-semibold text-amber-700 mb-3">咖啡的传播路径</h3>
-                     <p class="text-stone-700 bg-stone-100 p-3 rounded-md shadow-sm">埃塞俄比亚 → 也门 → 土耳其 → 欧洲 → 印度 → 意大利 → 荷兰 → 斯里兰卡 → 印度尼西亚 → 英国 → 法国 → 马提尼亚 → 圭亚那 → 哥伦比亚 → 巴西</p>
-                </div>
-                <div>
-                     <h3 class="text-2xl font-semibold text-amber-700 mb-3">咖啡的万国“昵称”</h3>
-                     <div class="grid grid-cols-2 md:grid-cols-3 gap-2 text-stone-700">
-                         <p class="p-2 bg-amber-50 rounded-md">土耳其语：Kahve</p>
-                         <p class="p-2 bg-amber-50 rounded-md">法语：Café</p>
-                         <p class="p-2 bg-amber-50 rounded-md">西班牙语：Kape</p>
-                         <p class="p-2 bg-amber-50 rounded-md">意大利语：Caffe</p>
-                         <p class="p-2 bg-amber-50 rounded-md">荷兰语：Kope</p>
-                         <p class="p-2 bg-amber-50 rounded-md">希腊语：Kafe</p>
-                         <p class="p-2 bg-amber-50 rounded-md">俄语：Kophe</p>
-                     </div>
-                </div>
-            </div>
 
-            <div id="bean-basics" class="content-section p-4 bg-white rounded-lg shadow">
-                <h2 class="text-3xl font-semibold text-amber-700 mb-6">认识咖啡豆：从果实到品种</h2>
-                <p class="mb-6 text-lg">咖啡豆并非直接长在树上，而是咖啡树结出的果实——“咖啡樱桃”的果核。了解它的结构和品种是认识咖啡的第一步。</p>
-                
-                <div class="mb-8">
-                    <h3 class="text-2xl font-semibold text-amber-700 mb-4">咖啡果实的奇妙结构</h3>
-                    <p class="mb-4">每一颗咖啡樱桃都像一个小小的宝藏盒，层层包裹着珍贵的咖啡豆。点击下方各层查看详情：</p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div class="coffee-cherry-layer p-4 bg-red-100 border border-red-300 rounded-lg text-center" onclick="showLayerInfo('外果皮', '最外层，像樱桃皮一样保护着果实。成熟时由青绿色变为鲜艳的红色或黄色。')">
-                            <h4 class="font-semibold text-red-700 text-lg">外果皮 (Outer Skin)</h4>
-                            <p class="text-sm text-red-600">(点击查看)</p>
-                        </div>
-                        <div class="coffee-cherry-layer p-4 bg-orange-100 border border-orange-300 rounded-lg text-center" onclick="showLayerInfo('果肉 (Pulp)', '外果皮之下是甜美的果肉，富含糖分，是许多小动物的美食。')">
-                             <h4 class="font-semibold text-orange-700 text-lg">果肉 (Pulp/Mesocarp)</h4>
-                             <p class="text-sm text-orange-600">(点击查看)</p>
-                        </div>
-                        <div class="coffee-cherry-layer p-4 bg-yellow-100 border border-yellow-300 rounded-lg text-center" onclick="showLayerInfo('果胶层 (Pectin Layer/Mucilage)', '一层黏滑的透明物质，含糖量极高，对咖啡发酵和风味形成至关重要。')">
-                             <h4 class="font-semibold text-yellow-700 text-lg">果胶层 (Mucilage)</h4>
-                             <p class="text-sm text-yellow-600">(点击查看)</p>
-                        </div>
-                        <div class="coffee-cherry-layer p-4 bg-lime-100 border border-lime-300 rounded-lg text-center" onclick="showLayerInfo('羊皮纸 (Parchment Coat)', '像羊皮纸一样坚韧的内果皮，保护着咖啡豆。干燥后呈浅黄色。')">
-                             <h4 class="font-semibold text-lime-700 text-lg">羊皮纸 (Parchment)</h4>
-                             <p class="text-sm text-lime-600">(点击查看)</p>
-                        </div>
-                        <div class="coffee-cherry-layer p-4 bg-green-100 border border-green-300 rounded-lg text-center" onclick="showLayerInfo('银皮 (Silver Skin/Chaff)', '紧贴咖啡豆的一层薄膜，像蝉翼一样。烘焙时大部分会脱落。')">
-                             <h4 class="font-semibold text-green-700 text-lg">银皮 (Silver Skin)</h4>
-                             <p class="text-sm text-green-600">(点击查看)</p>
-                        </div>
-                        <div class="coffee-cherry-layer p-4 bg-emerald-100 border border-emerald-300 rounded-lg text-center" onclick="showLayerInfo('果核/咖啡豆 (Bean/Endosperm)', '通常一颗咖啡果实中有两瓣，这就是我们最终烘焙和研磨的咖啡豆。')">
-                             <h4 class="font-semibold text-emerald-700 text-lg">咖啡豆 (Bean)</h4>
-                             <p class="text-sm text-emerald-600">(点击查看)</p>
-                        </div>
-                    </div>
-                    <div id="layer-info-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 hidden rounded-lg" onclick="this.classList.add('hidden')">
-                        <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full" onclick="event.stopPropagation()">
-                            <h3 id="layer-name" class="text-xl font-bold text-amber-700 mb-2"></h3>
-                            <p id="layer-description" class="text-stone-700"></p>
-                            <button class="mt-4 bg-amber-600 text-white px-4 py-2 rounded hover:bg-amber-700" onclick="document.getElementById('layer-info-popup').classList.add('hidden')">关闭</button>
-                        </div>
-                    </div>
-                     <img src="https://placehold.co/500x350/fef3c7/854d0e?text=咖啡果实结构示意图" alt="咖啡果实内部结构图解" class="my-6 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/500x350/cccccc/969696?text=图片加载失败'">
-                </div>
-                
-                <div>
-                    <h3 class="text-2xl font-semibold text-amber-700 mb-4">咖啡的三大原生种</h3>
-                    <p class="mb-4">世界上有多种咖啡树，但商业上最重要的主要有三种：</p>
-                    <div class="grid md:grid-cols-3 gap-6 mb-6">
-                        <div class="p-4 bg-stone-50 rounded-lg shadow-md">
-                            <h4 class="text-xl font-bold text-green-700 mb-2">阿拉比卡 (Arabica)</h4>
-                            <img src="https://placehold.co/300x200/c2f0c2/166534?text=阿拉比卡咖啡豆" alt="阿拉比卡咖啡豆图片" class="w-full h-40 object-cover rounded mb-3" onerror="this.src='https://placehold.co/300x200/cccccc/969696?text=图片加载失败'">
-                            <p><strong class="text-stone-600">特征：</strong>豆型椭圆细长，中线呈"S"状。</p>
-                            <p><strong class="text-stone-600">风味：</strong>酸质优质，花香清新，口感舒适。</p>
-                            <p><strong class="text-stone-600">占比：</strong>全球产量的60-70%，风味最佳。</p>
-                            <p><strong class="text-stone-600">咖啡因：</strong>较低 (0.9%-1.4%)。</p>
-                        </div>
-                        <div class="p-4 bg-stone-50 rounded-lg shadow-md">
-                            <h4 class="text-xl font-bold text-orange-700 mb-2">罗布斯塔 (Robusta)</h4>
-                            <img src="https://placehold.co/300x200/ffe4b5/9a3412?text=罗布斯塔咖啡豆" alt="罗布斯塔咖啡豆图片" class="w-full h-40 object-cover rounded mb-3" onerror="this.src='https://placehold.co/300x200/cccccc/969696?text=图片加载失败'">
-                            <p><strong class="text-stone-600">特征：</strong>豆型偏圆，中线呈"1"字形。</p>
-                            <p><strong class="text-stone-600">风味：</strong>口感醇厚，油脂丰富，有榛果、谷物味，有时带土味。</p>
-                            <p><strong class="text-stone-600">用途：</strong>常用于速溶咖啡、拼配意式豆。</p>
-                            <p><strong class="text-stone-600">咖啡因：</strong>较高 (1.7%-4.0%)。</p>
-                        </div>
-                        <div class="p-4 bg-stone-50 rounded-lg shadow-md">
-                            <h4 class="text-xl font-bold text-yellow-700 mb-2">利比里亚 (Liberica)</h4>
-                             <img src="https://placehold.co/300x200/fffacd/b45309?text=利比里亚咖啡豆" alt="利比里亚咖啡豆图片" class="w-full h-40 object-cover rounded mb-3" onerror="this.src='https://placehold.co/300x200/cccccc/969696?text=图片加载失败'">
-                            <p><strong class="text-stone-600">特征：</strong>豆身瘦长，似瓜子，中线呈"1"字形。</p>
-                            <p><strong class="text-stone-600">风味：</strong>坚果、黑巧克力厚重感，烟熏味强烈。</p>
-                            <p><strong class="text-stone-600">占比：</strong>产量极小，约1%。</p>
-                            <p><strong class="text-stone-600">特点：</strong>风味独特，不易被大众接受。</p>
-                        </div>
-                    </div>
-                     <div class="chart-container mx-auto">
-                        <canvas id="coffeeVarietyChart"></canvas>
-                    </div>
-                    <p class="text-sm text-center mt-2 text-stone-600">图表：主要咖啡品种特性对比</p>
-                </div>
-            </div>
-
-            <div id="coffee-lands" class="content-section p-4 bg-white rounded-lg shadow">
-                <h2 class="text-3xl font-semibold text-amber-700 mb-6">咖啡的家园：产地与种植</h2>
-                <p class="mb-6 text-lg">咖啡树是热带植物，主要种植在被称为“咖啡带”的区域。不同产区的气候和土壤赋予了咖啡豆独特的风味特征。</p>
-                
-                <div class="mb-8">
-                    <h3 class="text-2xl font-semibold text-amber-700 mb-3">咖啡带：黄金种植区</h3>
-                    <p class="bg-green-50 p-3 rounded-md text-green-800 shadow-sm">咖啡树适宜的种植温度为16-25℃，主要种植在赤道至南北纬25°之间的环状地带，这个区域被称为“咖啡带”。</p>
-                    <img src="https://placehold.co/600x350/d1fae5/065f46?text=世界咖啡带地图" alt="世界咖啡带地图示意图" class="my-4 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/600x350/cccccc/969696?text=图片加载失败'">
-                </div>
-
-                <div>
-                    <h3 class="text-2xl font-semibold text-amber-700 mb-4">全球三大黄金咖啡产区风味雷达图</h3>
-                    <p class="mb-4">点击产区名称查看其典型风味特征：</p>
-                    <div class="flex flex-wrap justify-around mb-6">
-                        <button class="region-button bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded mb-2" data-region="americas">美洲产区</button>
-                        <button class="region-button bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded mb-2" data-region="africa">非洲产区</button>
-                        <button class="region-button bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded mb-2" data-region="asia">亚洲产区</button>
-                    </div>
-                    <div class="chart-container mx-auto">
-                        <canvas id="regionFlavorChart"></canvas>
-                    </div>
-                    <p id="region-flavor-description" class="mt-4 text-center text-stone-700 bg-stone-100 p-3 rounded-md shadow-sm"></p>
-                </div>
-                <div class="mt-8">
-                    <h3 class="text-2xl font-semibold text-amber-700 mb-3">咖啡树的种植与结果</h3>
-                    <ul class="list-disc list-inside space-y-2 text-stone-700">
-                        <li><strong>苗床培育：</strong>筛选优质树苗移植到种植园。</li>
-                        <li><strong>开花结果：</strong>从播种到开花需三年。一年开一次花，旱季后的雨天是开花信号。花期极短（约三天），之后长出咖啡果实。阿拉比卡品种雌雄同株，可自花授粉。果实初期为青色，成熟后变为黄色或红色。</li>
-                        <li><strong>寿命：</strong>一般十几年，最长可达70年。</li>
+                <div id="wet-process" class="tab-panel hidden">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">水洗处理法 (Washed Process)</h3>
+                    <p class="text-gray-700 mb-4">
+                        水洗法，顾名思义是用水将咖啡果皮果肉与咖啡豆分离开来。先是去除掉果实的外皮，接着通过发酵去除掉果肉。当咖啡豆被完全分离出来，便将豆子转移到太阳下晒干。世界上的大部分咖啡都使用水洗处理法。
+                    </p>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">加工过程</h4>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2 mb-4">
+                        <li><strong>浮选</strong>：将采摘的咖啡樱桃放入大水槽筛除浮豆。</li>
+                        <li><strong>去皮</strong>：通过去皮机、去果胶机，脱去外果皮、果肉和果脑。</li>
+                        <li><strong>发酵</strong>：上一步没有清除干净的，便在这一步放入水槽中通过发酵（18-36h），由微生物来分解、去除残余果胶。以使风味更干净、酸质更明亮。</li>
+                        <li><strong>水洗</strong>：将发酵好的咖啡豆进行多次水洗冲刷，直至咖啡豆表面干净无残留物。</li>
+                        <li><strong>干燥</strong>：此时的咖啡豆含水率仍有50%，必须加以干燥，使含水率控制在10~12%。</li>
+                        <li><strong>脱壳储存</strong>：将干燥好的咖啡豆用脱壳机去除羊皮纸、银皮，再包装储存起来。</li>
+                    </ul>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">口感</h4>
+                    <p class="text-gray-700 mb-4">
+                        酸度明亮，口感纯粹、风味干净、醇厚度偏低。因为鲜果采摘后直接脱皮进行水洗去除果胶后进行晾晒，所以牺牲了部分甜感和风味复杂度。
+                    </p>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">优缺点</h4>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2">
+                        <li><strong>优点</strong>：工艺耗时短、受气候影响小、瑕疵豆少、时间成本比日晒低。减少了果肉果胶参与后续的发酵和晾晒，更能保存咖啡完整的风味，体现产地的风士特征。</li>
+                        <li><strong>缺点</strong>：用水量大，流程复杂，容易过度发酵、废液排放会污染环境。</li>
                     </ul>
                 </div>
-                 <div class="mt-8">
-                    <h3 class="text-2xl font-semibold text-amber-700 mb-3">咖啡豆的产季</h3>
-                    <p class="mb-2 text-stone-700">咖啡作为农作物，产季因地理位置和品种而异。大部分产区一年一季，少数产区（如哥伦比亚、肯尼亚）一年两季。</p>
-                    <img src="https://placehold.co/600x400/e0e7ff/3730a3?text=咖啡豆产季表" alt="咖啡豆产季表示意图（占位）" class="my-4 rounded-lg shadow mx-auto" onerror="this.src='https://placehold.co/600x400/cccccc/969696?text=图片加载失败'">
-                    <p class="text-sm text-stone-600">（注：上图为咖啡豆产季表占位符，实际内容请参考具体产区信息。）</p>
+
+                <div id="honey-process" class="tab-panel hidden">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">蜜处理法 (Honey Process)</h3>
+                    <p class="text-gray-700 mb-4">
+                        蜜处理可不是在处理的过程中加入了“蜂蜜”！蜜处理是在咖啡果脱皮后，是将咖啡樱桃的果皮果肉去除掉，保留果胶进行干燥。由于咖啡豆表层粘膜极为粘滑且糖度极高，因此人们通常称之为「蜜」处理。
+                    </p>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">加工过程</h4>
+                    <p class="text-gray-700 mb-4">步骤：筛选——去皮—干燥（保留果胶）——脱壳储存</p>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2 mb-4">
+                        <li><strong>浮选</strong>：将采摘的咖啡樱桃放入大水槽筛除浮豆。</li>
+                        <li><strong>去皮</strong>：通过果肉筛除机脱去表层的果皮、果肉但保留一定程度的果胶，果胶的多少会直接影响最终的咖啡风味与甜度。</li>
+                        <li><strong>干燥</strong>：将保留一定果胶的咖啡果实进行日晒干燥，使含水率控制在11%左右。刚开始晾晒时对发酵程度的把控、翻动的频率要求较高，主要为了避免过度发酵而带来的负面味道了。</li>
+                        <li><strong>储存</strong>：将干燥好的羊皮纸咖啡豆包装储存好。</li>
+                    </ul>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">口感</h4>
+                    <p class="text-gray-700 mb-4">
+                        风味佳，介于日晒和水洗之间，酸甜平衡，醇味浓厚。鲜果脱去果皮后保留果肉果胶进行晾晒，保留了咖啡成熟果实的甜美风味，一般会带有热带水果、莓果的调性。
+                    </p>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">蜜处理分类</h4>
+                    <p class="text-gray-700 mb-4">
+                        蜜处理根据果胶保留的多少划分为黑蜜、红蜜、黄蜜、白蜜。
+                    </p>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2">
+                        <li><strong>黑蜜</strong>：留着百分百黏液不清洗的，晒起来颜色较黑暗，称为黑蜜。</li>
+                        <li><strong>红蜜</strong>：大约清洗掉25%。</li>
+                        <li><strong>黄蜜</strong>：则是清洗掉50%。</li>
+                        <li><strong>白蜜</strong>：留着百分之25%黏液再进行干燥的就叫做白蜜。白蜜风味接近水洗处理，风味干净，酸味明亮。黑蜜较接近日晒处理法，果香清楚果酸柔和。</li>
+                    </ul>
+                </div>
+
+                <div id="special-process" class="tab-panel hidden">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">特殊及新奇处理法</h3>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">湿刨法 (Wet-Hulled)</h4>
+                    <p class="text-gray-700 mb-2">常见于印度尼西亚 苏门答腊，又称苏门答腊法、半水洗法、半日晒法。</p>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2 mb-4">
+                        <li><strong>加工过程</strong>：咖啡豆采收→去除果皮发酵→去果胶→内果皮干燥2-3天（预备干燥）→去除内果皮→生豆干燥。</li>
+                        <li><strong>风味特征</strong>：高醇厚度，平稳的酸度，独特的香气与余韵，风味浓郁。</li>
+                    </ul>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">酒桶发酵处理法 (Barrel-Aged)</h4>
+                    <p class="text-gray-700 mb-2">新潮的处理方式，最常见为威士忌、白兰地和红酒酒桶处理。</p>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2 mb-4">
+                        <li><strong>加工过程</strong>：咖啡樱桃先进行水洗处理，水洗处理完将咖啡樱桃放进酒桶中，在15-20℃左右的低温环境中发酵30-40天，再阴干晾晒。</li>
+                        <li><strong>风味特征</strong>：酒桶发酵处理法使得咖啡有惊艳的酒香，浓稠的口感。</li>
+                    </ul>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">厌氧发酵处理法 (Anaerobic Fermentation)</h4>
+                    <p class="text-gray-700 mb-2">也被称为二氧化碳浸渍法、红酒处理法。</p>
+                    <p class="text-gray-700 mb-4">新潮处理方法，最早由2015年WBC参赛者SasaSestic在咖啡领域引起这一股浪潮，他以模拟红酒法的咖啡豆一举拿下2015WBC冠军。是一种低氧环境下或无氧的环境下的发酵方式。厌氧发酵工艺来源于红酒造，在密闭容器里注入二氧化碳，挤出里面的氧气，在无氧的环境下，減缓果胶中糖份的分解速度，PH值也以更缓慢的速度下降，延卡发酵时间，借此发展出更佳的甜味，以及更平衡的风味，最终得到风味与众不同的咖啡豆。</p>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">体内发酵处理法 (Internal Fermentation)</h4>
+                    <p class="text-gray-700 mb-2">以苏门答腊的猫屎咖啡最为典型。猫屎咖啡也称为麝香猫咖啡（KopiLuwak）。麝香猫主要以成熟的咖啡果实为食，咖啡果实在麝香猫胃里完成发酵后，蛋白质遭到破坏，产生短肽和更多的自由氨基酸，咖啡的苦涩味会降低。由于咖啡豆不能被香猫消化，会被排泄出来，排出来的粪便就是主要原料，经过清洗、烘焙后就成了猫屎咖啡。这种处理方式不仅局限于麝香猫，印度的猕猴咖啡、斯里兰卡的象粪咖啡和巴西的凤冠雉咖啡等都是通过体内发酵处理得到。</p>
+                    <h4 class="text-xl font-semibold text-stone-700 mb-2">低因-瑞士水处理法 (Swiss Water Process)</h4>
+                    <p class="text-gray-700 mb-2">目前，最安全的低因处理方式是瑞士水洗处理法，由于此法是在瑞士发明的，所以称为瑞士水洗式处理法。先使用热水对一批咖啡豆浸泡，使热水完全溶解出咖啡里的物质，从而达到饱和状态。此时将生豆捞出，再用活性炭将溶液里的咖啡因过滤出来，剩下的溶液里仅缺失了咖啡因，其他物质还处于水里，水就变成了“风味饱和液”。接下来将其他的咖啡生豆倒入水中浸泡，由于风味分子已饱和，所以只会溶解新一批咖啡豆里的咖啡因，最终就能够得到一批留有风味的低因咖啡了。</p>
                 </div>
             </div>
+        </section>
 
-            <div id="processing-methods" class="content-section p-4 bg-white rounded-lg shadow">
-                <h2 class="text-3xl font-semibold text-amber-700 mb-6">从果实到生豆：处理的艺术</h2>
-                <p class="mb-6 text-lg">咖啡处理法是将新鲜采摘的咖啡果实转变为可烘焙的咖啡生豆的关键过程。不同的处理方法会赋予咖啡豆截然不同的风味特征。</p>
-                <div class="mb-4 border-b border-stone-300">
-                    <nav class="flex space-x-1" aria-label="Tabs" role="tablist">
-                        <button type="button" class="tab-button py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 rounded-t-lg active" id="tab-washed" role="tab" aria-controls="panel-washed" aria-selected="true" data-target="panel-washed">水洗法</button>
-                        <button type="button" class="tab-button py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 rounded-t-lg" id="tab-natural" role="tab" aria-controls="panel-natural" aria-selected="false" data-target="panel-natural">日晒法</button>
-                        <button type="button" class="tab-button py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 rounded-t-lg" id="tab-honey" role="tab" aria-controls="panel-honey" aria-selected="false" data-target="panel-honey">蜜处理</button>
-                        <button type="button" class="tab-button py-3 px-4 inline-flex items-center gap-x-2 bg-transparent text-sm font-medium text-center text-stone-500 rounded-t-lg" id="tab-special" role="tab" aria-controls="panel-special" aria-selected="false" data-target="panel-special">特殊处理</button>
-                    </nav>
-                </div>
+        <section id="varieties" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-stone-800 mb-6">咖啡的品种</h2>
+            <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                咖啡属的植物约有40种，但能够生产出具有价值的咖啡豆的仅有阿拉比卡种Arabica、罗布斯塔种Robusta、利比里亚种Liberica，这三个品种被称为“咖啡三大原生种”。但不论何品种皆有优缺点，使用的目的与用途亦不尽相同。
+            </p>
 
-                <div class="mt-3">
-                    <div id="panel-washed" class="tab-panel" role="tabpanel" aria-labelledby="tab-washed">
-                        <h3 class="text-xl font-semibold text-stone-700 mb-2">水洗处理法 (Washed Process)</h3>
-                        <p class="mb-2"><strong>原理：</strong>用水将咖啡果皮果肉与咖啡豆分离开来。</p>
-                        <p class="mb-2"><strong>加工过程：</strong>浮选 → 去皮 → 发酵 (18-36h，分解残余果胶) → 水洗 → 干燥 (含水率至10-12%) → 脱壳储存。</p>
-                        <p class="mb-2"><strong>口感：</strong>酸度明亮，口感纯粹，风味干净，醇厚度偏低。</p>
-                        <p class="mb-2"><strong>优点：</strong>工艺耗时短，瑕疵豆少，更能体现产地风土特征。</p>
-                        <p class="mb-2"><strong>缺点：</strong>用水量大，易过度发酵，废液可能污染环境。</p>
-                    </div>
-                    <div id="panel-natural" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-natural">
-                        <h3 class="text-xl font-semibold text-stone-700 mb-2">日晒处理法 (Natural/Dry Process)</h3>
-                        <p class="mb-2"><strong>原理：</strong>将完整咖啡樱桃直接在阳光下铺晒干燥。</p>
-                        <p class="mb-2"><strong>加工过程：</strong>浮选 → 干燥 (2-4周，含水率至9-12%，需翻动) → 脱壳储存。</p>
-                        <p class="mb-2"><strong>口感：</strong>风味复杂，多有酒香，果味浓郁，醇厚度高，酸质较低。</p>
-                        <p class="mb-2"><strong>优点：</strong>处理简单，风味丰富，甜度高，节约水资源。</p>
-                        <p class="mb-2"><strong>缺点：</strong>耗时长，对天气和场地要求高，风味不可控，易霉变。</p>
-                    </div>
-                    <div id="panel-honey" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-honey">
-                        <h3 class="text-xl font-semibold text-stone-700 mb-2">蜜处理法 (Honey Process)</h3>
-                        <p class="mb-2"><strong>原理：</strong>去除果皮果肉后，保留部分果胶进行干燥。</p>
-                        <p class="mb-2"><strong>加工过程：</strong>浮选 → 去皮 (保留一定果胶) → 干燥 (控制发酵) → 储存。</p>
-                        <p class="mb-2"><strong>口感：</strong>风味佳，介于日晒和水洗之间，酸甜平衡，醇厚度高，常有热带水果、莓果调性。</p>
-                        <p class="mb-2"><strong>分类：</strong>根据果胶保留量分为黑蜜（风味近乎日晒）、红蜜、黄蜜、白蜜（风味近乎水洗）。</p>
-                    </div>
-                    <div id="panel-special" class="tab-panel hidden" role="tabpanel" aria-labelledby="tab-special">
-                         <h3 class="text-xl font-semibold text-stone-700 mb-3">特殊及新奇处理法</h3>
-                         <ul class="list-disc list-inside space-y-3 text-stone-600">
-                            <li><strong>湿刨法 (Wet-Hulled):</strong> 常见于印尼苏门答腊。风味：高醇厚度，平稳酸度，独特香气。</li>
-                            <li><strong>酒桶发酵处理法 (Barrel-Aged):</strong> 咖啡豆在酒桶中发酵。风味：惊艳酒香，浓稠口感。</li>
-                            <li><strong>厌氧发酵处理法 (Anaerobic Fermentation):</strong> 无氧环境下发酵。风味：甜感佳，风味平衡独特。</li>
-                            <li><strong>体内发酵处理法 (Internal Fermentation):</strong> 如猫屎咖啡。动物食用咖啡果实后排泄出来。风味：苦涩味降低。</li>
-                            <li><strong>低因-瑞士水处理法 (Swiss Water Process):</strong> 安全的低因处理方式，保留风味。</li>
-                         </ul>
-                    </div>
-                </div>
+            <div class="bg-white p-8 rounded-lg shadow-md mb-8 chart-container">
+                <canvas id="coffeeVarietyChart"></canvas>
             </div>
 
-            <div id="roasting-magic" class="content-section p-4 bg-white rounded-lg shadow">
-                <h2 class="text-3xl font-semibold text-amber-700 mb-6">烘焙的魔法：赋予咖啡灵魂</h2>
-                <p class="mb-6 text-lg">咖啡生豆本身并没有我们熟悉的咖啡香味。是烘焙过程中的一系列复杂化学反应，赋予了咖啡豆独特的香气、味道和口感。不同的烘焙程度，会展现出咖啡豆千变万化的风味。</p>
-
-                <div class="mb-8">
-                    <h3 class="text-2xl font-semibold text-stone-700 mb-4">烘焙度三大类</h3>
-                    <div class="grid md:grid-cols-3 gap-6">
-                        <div class="p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                            <h4 class="text-xl font-bold text-yellow-700 mb-2">浅度烘焙 (Light Roast)</h4>
-                            <p><strong>特点：</strong>豆表呈浅棕色。</p>
-                            <p><strong>风味：</strong>酸度明亮突出，水果调性丰富，醇厚度较低，香气柔和。原始风味保留完整。</p>
-                        </div>
-                        <div class="p-4 bg-orange-50 rounded-lg border border-orange-200">
-                            <h4 class="text-xl font-bold text-orange-700 mb-2">中度烘焙 (Medium Roast)</h4>
-                            <p><strong>特点：</strong>豆表呈棕色。</p>
-                            <p><strong>风味：</strong>酸度圆润，甜味突出，口感平衡饱满，发展出更多烘焙香气。</p>
-                        </div>
-                        <div class="p-4 bg-red-50 rounded-lg border border-red-200">
-                            <h4 class="text-xl font-bold text-red-800 mb-2">深度烘焙 (Dark Roast)</h4>
-                            <p><strong>特点：</strong>豆表呈深褐色，甚至油亮。</p>
-                            <p><strong>风味：</strong>苦感突出，饱满醇厚，酸度几乎消失。风味以坚果、巧克力、焦糖为主。</p>
-                        </div>
-                    </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">阿拉比卡 Arabica ——优质的产量冠军</h3>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2">
+                        <li><strong>特征</strong>：豆型呈椭圆形，较细长且扁平，中线呈“S”状。</li>
+                        <li><strong>产地</strong>：埃塞俄比亚、巴西、哥伦比亚、危地马拉等。</li>
+                        <li><strong>风味</strong>：拥有优质的酸质，更以清新的花香与舒服的酸质征服咖啡客的味蕾。</li>
+                        <li><strong>特点</strong>：所有的咖啡中阿拉比卡种咖啡占60%~70%，它的绝佳风味，使它成为这些原生种中最受欢迎的存在。但阿拉比卡种咖啡对干燥、霜害、病虫害等的抵抗力过低，特别不耐咖啡的天敌——叶锈病，因此各生产地都致力于品种改良。</li>
+                    </ul>
                 </div>
-
-                <div class="mb-8">
-                    <h3 class="text-2xl font-semibold text-stone-700 mb-4">SCA烘焙标准：八大等级</h3>
-                     <p class="text-sm text-stone-600 mb-3">（SCA: Specialty Coffee Association，精品咖啡协会）</p>
-                     <ol class="list-decimal list-inside space-y-2 bg-stone-50 p-4 rounded-md shadow-sm">
-                        <li><strong>极浅烘焙 (Light Cinnamon):</strong> 第一次爆裂高峰期即将结束。风味：青草味、酸味凸显。</li>
-                        <li><strong>肉桂烘焙 (Cinnamon):</strong> 第一次爆裂结束前后。风味：香气尚可，酸味强。</li>
-                        <li><strong>中浅烘焙 (Medium Light):</strong> 第一次爆裂结束后。风味：苦味出现，酸大于苦。</li>
-                        <li><strong>中度烘焙 (Medium):</strong> 介于一爆与二爆之间。风味：酸苦平衡，香气风味佳。</li>
-                        <li><strong>城市烘焙 (City):</strong> 有些豆子在第二次爆裂时。风味：苦酸平衡，层次感佳。</li>
-                        <li><strong>深城市烘焙 (Full City):</strong> 第二次爆裂高峰期前。风味：苦味强于酸味，豆表油亮。</li>
-                        <li><strong>法式烘焙 (French):</strong> 第二次爆裂高峰期后。风味：酸度弱，有独特香味。</li>
-                        <li><strong>意式烘焙 (Italian):</strong> 油脂渗出前。风味：表面近炭化，主要为苦味。</li>
-                     </ol>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">罗布斯塔 Robusta ——不可忽视的绿叶</h3>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2">
+                        <li><strong>特征</strong>：外形偏圆；中线呈“1”字形。</li>
+                        <li><strong>产地</strong>：巴西、印尼、印度、越南等。</li>
+                        <li><strong>风味</strong>：口感醇厚低沉，咖啡油脂更丰富，具有榛果、小麦、谷物等风味，甚至会出现刺鼻的土味，通常用来拼配意式豆。</li>
+                        <li><strong>特点</strong>：罗布斯塔种是在非洲刚果发现的耐叶锈病品种，较阿拉比卡种而言具有更强的抗病力。罗布斯塔种的产量近几年有所上升，占咖啡豆产量的30%~40%，其主要生产国是印度尼西亚、越南及西非诸国。它一般用于速溶咖啡、罐装咖啡、液体咖啡等工业咖啡生产，速溶咖啡选用罗布斯塔种的数量大约是阿拉比卡种的2倍。罗布斯塔种咖啡的咖啡因含量在3.2%左右，远高于阿拉比卡种的1.5%。罗布斯塔种天生就没有阿拉比卡豆独有的飘逸芳香风味，而是具备更厚、更沉稳的口感，以及仿佛吃到花生酱、榛果酱般的强烈核桃、花生、榛果的风味。</li>
+                    </ul>
                 </div>
-                 <div class="bg-amber-50 p-4 rounded-lg border-l-4 border-amber-500">
-                    <h4 class="text-lg font-semibold text-amber-700 mb-2">烘焙度总结</h4>
-                    <p class="text-stone-700"><strong class="text-amber-800">烘焙度越浅：</strong>咖啡越酸，咖啡本身的风味特征保留越完整。</p>
-                    <p class="text-stone-700"><strong class="text-amber-800">烘焙度越深：</strong>咖啡越苦，咖啡本身特性保留越少，而烘焙反应带来的风味（如焦糖、烟熏）越多。</p>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">利比里亚 Liberica ——小众的1%</h3>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2">
+                        <li><strong>特征</strong>：豆身瘦长，一头尖状，类似瓜子的形状，中线也呈现“1”字形。</li>
+                        <li><strong>产地</strong>：利比里亚、苏里南圭亚等少数几个地方。</li>
+                        <li><strong>风味</strong>：主调为坚果、黑巧克力的厚重感和烟熏的香气，又因极具强烈的烟熏感让人难以接受。</li>
+                        <li><strong>特点</strong>：利比里亚种咖啡豆的原产地在非洲西部，这一品种对于不论是高温或低温、潮湿或干燥等各种环境，皆存很强的适应能力，但对叶锈病的抵抗能力弱，风味又较阿拉比卡种差，故仅在西非部分国家（利比亚、科特迪瓦等）国内交易买卖，或者栽种来供研究使用。</li>
+                    </ul>
                 </div>
             </div>
+        </section>
 
-            <div id="coffee-composition" class="content-section p-4 bg-white rounded-lg shadow">
-                <h2 class="text-3xl font-semibold text-amber-700 mb-6">咖啡的内涵：解密成分</h2>
-                <p class="mb-6 text-lg">一杯香醇的咖啡，其风味和功效源于其复杂的化学成分。了解这些主要成分，能帮助我们更深入地理解咖啡。</p>
-                <div class="space-y-4">
-                    <div class="p-3 bg-stone-50 rounded-md shadow-sm"><strong>咖啡因:</strong> 主要提神成分，阿拉比卡种含量较低，罗布斯塔种较高。能加速新陈代谢，有苦味。</div>
-                    <div class="p-3 bg-stone-50 rounded-md shadow-sm"><strong>脂肪:</strong> 约占16%，是咖啡香气和顺滑口感的重要来源。</div>
-                    <div class="p-3 bg-stone-50 rounded-md shadow-sm"><strong>单宁酸:</strong> 易溶于水，过度萃取或煮沸过久会分解产生涩味。</div>
-                    <div class="p-3 bg-stone-50 rounded-md shadow-sm"><strong>有机酸:</strong> 如绿原酸、苹果酸、柠檬酸等，是咖啡酸味的主要来源。烘焙会改变其组成和含量。</div>
-                    <div class="p-3 bg-stone-50 rounded-md shadow-sm"><strong>蛋白质:</strong> 参与美拉德反应，产生咖啡的色泽、苦甜味和香气。</div>
-                    <div class="p-3 bg-stone-50 rounded-md shadow-sm"><strong>糖类:</strong> 主要是蔗糖，是咖啡甜感的来源，并在烘焙中焦糖化，产生色泽和风味。</div>
-                    <div class="p-3 bg-stone-50 rounded-md shadow-sm"><strong>矿物质:</strong> 含有少量石灰、铁、磷等。</div>
-                    <div class="p-3 bg-stone-50 rounded-md shadow-sm"><strong>水分:</strong> 生豆含水量约10-13%，影响烘焙效率。</div>
-                </div>
+        <section id="regions" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-stone-800 mb-6">咖啡带及产地</h2>
+            <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                咖啡树是热带植物，适宜的种植温度为16~25℃之间，主要种植在赤道至南北纬25°之间，这个区域被称为“咖啡带”。目前全球重要的三大黄金咖啡产区，分别为美洲产区、非洲产区和亚洲产区。
+            </p>
+
+            <div class="mb-8 flex flex-wrap gap-4 justify-center">
+                <button class="region-button active" data-region="americas">美洲产区</button>
+                <button class="region-button" data-region="africa">非洲产区</button>
+                <button class="region-button" data-region="asia">亚洲产区</button>
             </div>
 
-            <div id="tasting-coffee" class="content-section p-4 bg-white rounded-lg shadow">
-                <h2 class="text-3xl font-semibold text-amber-700 mb-6">品味咖啡：感官的盛宴</h2>
-                <p class="mb-6 text-lg">咖啡品鉴是一门艺术，也是一门科学。它不仅仅是“喝”咖啡，更是调动嗅觉、味觉、触觉，全面感受咖啡风味的过程。</p>
-                <div class="mb-8">
-                    <h3 class="text-2xl font-semibold text-stone-700 mb-3">咖啡风味的描述维度</h3>
-                    <p class="mb-4 bg-amber-50 p-3 rounded-md text-amber-800 shadow-sm"><strong>风味 = 香气 (嗅觉) + 味道 (味觉) + 口感 (触觉)</strong></p>
-                    <p class="mb-4">描述一杯咖啡的风味，通常从以下五个维度展开：</p>
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <div class="p-3 bg-stone-100 rounded-md"><strong>1. 香气 (Aroma/Fragrance):</strong> 分为干香（研磨后）和湿香（萃取后）。如花香、果香、坚果香、焦糖香等。</div>
-                        <div class="p-3 bg-stone-100 rounded-md"><strong>2. 酸质 (Acidity):</strong> 咖啡中令人愉悦的酸味，非指酸败。如水果酸、清新的酸。</div>
-                        <div class="p-3 bg-stone-100 rounded-md"><strong>3. 甜感 (Sweetness):</strong> 咖啡中的自然甜度，如水果甜、焦糖甜、蜂蜜甜。</div>
-                        <div class="p-3 bg-stone-100 rounded-md"><strong>4. 醇厚度 (Body/Mouthfeel):</strong> 咖啡在口中的重量感和质感，如清爽、顺滑、浓稠。</div>
-                        <div class="p-3 bg-stone-100 rounded-md"><strong>5. 余韵 (Aftertaste):</strong> 咖啡喝下后，残留在口腔和喉咙的味道和感觉，如回甘、余韵绵长。</div>
-                    </div>
+            <div class="bg-white p-8 rounded-lg shadow-md mb-8 chart-container">
+                <p id="region-flavor-description" class="text-gray-700 mb-6 text-center text-lg font-medium max-w-2xl mx-auto">选择一个产区查看其风味特征。</p>
+                <canvas id="regionFlavorChart"></canvas>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">美洲产区——坚果醇香代表</h3>
+                    <p class="text-gray-700 mb-3"><strong>柔和平衡</strong>，<strong>坚果</strong>、<strong>黑巧克力</strong>、<strong>焦糖甜度</strong>。</p>
+                    <p class="text-gray-700 mb-3">这里有着大量适合咖啡种植的气候，优渥的土塘十分适合咖啡树的生长。</p>
+                    <p class="text-gray-700"><strong>主要精品产区</strong>：巴西、哥伦比亚、哥斯达黎加、洪都拉斯、牙买加、危地马拉、巴拿马...</p>
                 </div>
-                <div>
-                    <h3 class="text-2xl font-semibold text-stone-700 mb-3">咖啡风味轮 (Coffee Taster’s Flavor Wheel)</h3>
-                    <p class="mb-2">咖啡风味轮是一套系统化的咖啡风味描述词汇库，帮助品鉴者更准确地识别和表达咖啡中的各种风味。它通常分为内环（基础风味）、中环（细分风味）和外环（具体风味）。</p>
-                    <img src="https://placehold.co/500x500/fff7ed/92400e?text=咖啡风味轮" alt="咖啡风味轮示意图 (SCA标准)" class="my-4 rounded-lg shadow-lg mx-auto border-4 border-amber-200" onerror="this.src='https://placehold.co/500x500/cccccc/969696?text=图片加载失败'">
-                    <p class="text-sm text-stone-600">（注：上图为咖啡风味轮占位符。实际的风味轮是一个详细的图表，您可以参考SCA官方发布的版本。使用时，从内环的基础风味向外环逐步细化，来描述您感受到的具体风味。）</p>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">非洲产区——明亮果香代表</h3>
+                    <p class="text-gray-700 mb-3"><strong>酸度突出</strong>，明亮的<strong>果酸</strong>、<strong>花香</strong>、<strong>果香</strong>。</p>
+                    <p class="text-gray-700 mb-3">非洲咖啡风味最具多样化，以及异国情调的香料味与迷人的莓果味。</p>
+                    <p class="text-gray-700"><strong>主要精品产区</strong>：埃塞俄比亚、肯尼亚、卢旺达、乌干达...</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">亚洲产区——草本醇香代表</h3>
+                    <p class="text-gray-700 mb-3"><strong>质感醇厚</strong>，<strong>木质</strong>、<strong>药香</strong>和<strong>香料味</strong>。</p>
+                    <p class="text-gray-700 mb-3">亚洲种植区域横跨各种气候和地形，充满草本调性和温和香料风味，低沉的闷香调性带来独特的醇香。</p>
+                    <p class="text-gray-700"><strong>主要精品产区</strong>：中国、印度尼西亚、巴布亚新几内亚、印度、泰国、菲律宾...</p>
                 </div>
             </div>
-        </main>
-    </div>
+            <div class="mt-12 flex justify-center">
+                <img src="https://placehold.co/800x450/E8E8E8/333333?text=咖啡产季表" alt="咖啡产季表" class="rounded-lg shadow-xl max-w-full h-auto">
+            </div>
+        </section>
+
+        <section id="flavor" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-stone-800 mb-6">咖啡的品鉴</h2>
+            <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                咖啡品鉴是一项通过感官来体验咖啡风味的艺术。它不仅仅是简单地品尝咖啡，还包含了对咖啡豆产地、烘焙工艺、以及冲泡方法的全面探索。
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">香气 (Fragrance & Aroma)</h3>
+                    <p class="text-gray-700 mb-3">香气是咖啡品尝中最早感知的咖啡风味，可以分为干香和湿香。</p>
+                    <p class="text-gray-700 mb-3"><strong>干香（Fragrance）</strong>描述的是新鲜烘焙咖啡豆及其研磨时所散发的独特气息，此类气息常被赞誉为“香气”。</p>
+                    <p class="text-gray-700 mb-3"><strong>湿香（Aroma）</strong>则指咖啡在萃取过程中和过程后，由产生的咖啡液释放出的诱人香味，这一感官体验常被称作“香味”。</p>
+                    <p class="text-gray-700"><strong>常见描述</strong>：花香：玫瑰、茉莉、肉桂、豆蔻、薄荷等。果香：柑橘、橙子、柠檬、葡萄、草莓、树莓等。</p>
+                    <p class="text-gray-700 mt-3 italic text-sm">负面味道：烟草味、汽油味、焦炭味、泥土味。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">酸质 (Acidity)</h3>
+                    <p class="text-gray-700 mb-3">咖啡的酸感是由舌头两侧感知的，一般咖啡豆烘焙越深，则酸度便递减，但一些高酸度的生豆，深烘时表现出是更多锐利及刺激性的口感。</p>
+                    <p class="text-gray-700"><strong>常见描述</strong>：正面的：果酸，清新的酸，舒适的，柔和，顺口的酸。负面的：尖锐的、刺激的、青涩的等。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">甜感 (Sweetness)</h3>
+                    <p class="text-gray-700 mb-3">甜味是一种温和、平滑的咖啡风味特征，能改善酸味的某些负面影响，主要通过味觉来感受。</p>
+                    <p class="text-gray-700"><strong>常见描述</strong>：水果甜：苹果的清甜、荔枝的甜等。蜂蜜甜：黑糖、蜂蜜、糖浆、黄糖、枫糖。焦糖甜：焦糖、太妃糖。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">醇厚度 (Body/Mouthfeel)</h3>
+                    <p class="text-gray-700 mb-3">醇厚度又称咖啡的触感、体脂感（body），咖啡豆质感是包括咖啡液体带来的触感、重量感、顺滑度的一种综合的感觉。</p>
+                    <p class="text-gray-700"><strong>常见描述</strong>：正面的：奶油感、顺滑感、圆润。负面的：干涩、粗糙、涩感。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">余韵 (Aftertaste)</h3>
+                    <p class="text-gray-700 mb-3">是指咖啡喝下后，残留在口腔的味道。在喝咖啡的时候，吞咽之后，紧闭嘴巴，用鼻子呼出气体，便能感受到咖啡的余韵。</p>
+                    <p class="text-gray-700"><strong>常见描述</strong>：正面的：回甘、余韵绵长、口鼻留香。负面的：杂味、苦味、涩味。</p>
+                </div>
+            </div>
+            <div class="mt-12 flex justify-center">
+                <img src="https://placehold.co/700x700/E8E8E8/333333?text=咖啡风味轮" alt="咖啡风味轮" class="rounded-lg shadow-xl max-w-full h-auto">
+            </div>
+            <h3 class="text-2xl font-bold text-stone-800 mt-12 mb-6">咖啡风味轮 Coffee Taster’s Flavor Wheel</h3>
+            <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                风味轮是一套逻辑严谨且系统的咖啡词汇库，咖啡里风丰富而细腻的风味分解归纳出来，建立了咖啡味谱的统一术语。最早出版于1995年，在过去的二十多年中，一直是行业的标准，在2016年初完成可21年以来的首次更新。在美国精品咖啡协会SCA的协调指导和世界咖啡研究协会WCR的通力合作下，专家们首次对其进行了横向与调整，专家组由数十位专业感官成员及科学家组成，这是人类史上规模最大的一次有关咖啡口味的专项研究，‘咖啡风味轮’所涵盖的口味种类和专业术语得到了有效补充。
+            </p>
+            <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                咖啡风味轮分内环、中环、外环，三个部分，咖啡爱好者可以通过咖啡风味轮从内环的基础味道香外环逐步细分。有了风味轮，可以更好的让我们更准确的去形容咖啡中的风味。
+            </p>
+            <ul class="list-disc pl-8 text-gray-700 space-y-2 mb-6">
+                <li><strong>内环</strong>：树咖啡风味轮的基础风味，也是最核心的部分，它包含了9种基础风味。分别为：烘焙韵、辛香韵、坚果韵、糖韵、花韵、水果韵、酸质/发酵韵、绿植/草本韵、其他。</li>
+                <li><strong>中环</strong>：则是对内环各个风味进行进一步的细分。例如：内环中的水果韵，中环就细分为浆果类、干果类、其他水果类、柑橘类。</li>
+                <li><strong>外环</strong>：是把咖啡更具象化的风味细分了出来。外环的设计增强了品鉴者对咖啡味道的描述和层次，在识别和描述咖啡时，可以更精准的表达出风味类型。例如：中环中的浆果类，外环则是细分为黑莓、小红梅、蓝莓、草莓。</li>
+            </ul>
+            <p class="text-lg leading-relaxed text-gray-700">
+                在品鉴咖啡的时候，我们要尽可能去捕捉香气和味道，然后将感知与风味轮上去做匹配，从内环到外环逐步细分，最终得到我们描述的风味。
+            </p>
+        </section>
+
+        <section id="roasting" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-stone-800 mb-6">咖啡烘焙及不同烘焙度</h2>
+            <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                咖啡生豆没有任何令人愉悦的味道，咖啡中可萃取物都是在烘焙过程产生的。咖啡生豆通过烘焙，会经历一系列的物理/化学反应，从而产生香气、味道和口感，不一样的烘焙度会让咖啡豆呈现出不一样的风味。
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">烘焙度大致上可以分为三大类：</h3>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2">
+                        <li><strong>浅度烘焙</strong>：浅度烘焙的咖啡中有机酸尚未被完全分解，因此酸度会较为抢眼，苦感浅到没感觉。同时受到烘焙的影响较小，来自咖啡本身的原始风味特征保存的相对完整。这也是现如今高等级的精品咖啡豆通常选择浅烘的原因。<strong>特点</strong>：咖啡豆表面呈现浅棕色，酸度明亮突出，水果调性丰富，醇厚度较低，香气柔和。</li>
+                        <li><strong>中度烘焙</strong>：中度烘焙的咖啡豆在烘焙过程中发生了更多的反应，有机酸逐渐分解，苦味开始出现，甜感突出，因此口感相对平衡，同时咖啡开始发展出更多的烘焙香气。<strong>特点</strong>：咖啡豆表面呈现棕色，酸度圆润，甜感突出，口感平衡饱满。</li>
+                        <li><strong>深度烘焙</strong>：深烘焙的咖啡豆随着烘焙过程中酸性物质分解消耗，酸度已经几乎销售不见，苦味为咖啡的主旋律，同时带有饱满浓郁的触感。<strong>特点</strong>：咖啡豆表面呈现深褐色，苦感突出，饱满醇厚，风味调性以坚果、巧克力、焦糖为主。</li>
+                    </ul>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">SCA烘焙标准：八大等级</h3>
+                    <ul class="list-disc pl-8 text-gray-700 space-y-2">
+                        <li><strong>极浅烘焙</strong>：在第一次爆裂高峰期即将结束之际。风味：青草味、凸显酸味，香味不足。</li>
+                        <li><strong>肉桂烘焙</strong>：第一次爆裂结束前后。风味：香味尚可，酸味强。</li>
+                        <li><strong>中浅烘焙</strong>：第一次爆裂结束后。风味：苦味出现，酸大于苦，醇厚度适中。</li>
+                        <li><strong>中度烘焙</strong>：第一次爆裂与第二次爆裂之间，没有产生爆裂状态。风味：酸中带苦，香气和风味俱佳。</li>
+                        <li><strong>城市烘焙</strong>：有些咖啡豆发生在第二次爆裂时。风味：苦度与酸度平衡，产生多层次感。</li>
+                        <li><strong>深城市烘焙</strong>：第二次爆裂进入高峰期之前。风味：苦味较酸味强，表面出现油亮。</li>
+                        <li><strong>法式烘焙</strong>：第二次爆裂进入高峰期之后。风味：酸度感觉不出，有独特香味。</li>
+                        <li><strong>意式烘焙</strong>：油脂稍微渗出来之前。风味：表面接近炭化，只要苦味。</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="mt-12 flex justify-center">
+                <img src="https://placehold.co/800x450/E8E8E8/333333?text=咖啡烘焙程度示意图" alt="咖啡烘焙程度示意图" class="rounded-lg shadow-xl max-w-full h-auto">
+            </div>
+            <h3 class="text-2xl font-bold text-stone-800 mt-12 mb-6">总结</h3>
+            <ul class="list-disc pl-8 text-gray-700 space-y-2">
+                <li>烘焙度越浅，咖啡越酸，咖啡本身的风味特征保留的越完整。</li>
+                <li>烘焙度越深，咖啡越苦，咖啡本身特性保留越少，而烘焙反应带来的风味和香气越多。</li>
+            </ul>
+        </section>
+
+        <section id="brewing" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-stone-800 mb-6">咖啡的成分组成</h2>
+            <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                一颗咖啡的主要成分包括咖啡因、单宁酸、脂肪（酸性脂肪、挥发性脂肪）、蛋白质、糖、水分、纤维、矿物质。
+            </p>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">咖啡因</h3>
+                    <p class="text-gray-700 mb-2">咖啡因在阿拉比卡种中占0.9%~1.4%，在罗布斯塔种中含量在1.7%~4.0%。通常高海拔的咖啡树咖啡因含量较低。</p>
+                    <p class="text-gray-700">咖啡因有提神的功效可以加速人体的新陈代谢，使人保持头脑清醒和思维灵敏。咖啡因有特别强烈的苦味，刺激中枢神经系统、心脏和呼吸系统。适量的咖啡因亦可减轻肌肉疲劳，促进消化液分泌。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">脂肪</h3>
+                    <p class="text-gray-700 mb-2">咖啡豆脂肪含量约占重量的16%，其中最重要的是酸性脂肪和挥发性脂肪。脂肪有助于在冲煮时保持咖啡的香气，提升咖啡的口感脂类含量的高低与咖啡的品质有很大的关系在风味上占极为重要的角色，是咖啡香气主要来源。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">单宁酸</h3>
+                    <p class="text-gray-700 mb-2">单宁酸很容易溶于水，煮沸后会分解成焦梧酸，所以冲泡过久的咖啡味道会变差。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">矿物质</h3>
+                    <p class="text-gray-700 mb-2">咖啡中的矿物质含有少量石灰、铁质、磷、碳酸钠等。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">纤维</h3>
+                    <p class="text-gray-700 mb-2">咖啡生豆中的纤维经过烘焙后会炭化与焦糖互相结合，是形成咖啡色调的原因之一。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">气体和芳香烃</h3>
+                    <p class="text-gray-700 mb-2">气体和芳香烃是咖啡香气的来源，咖啡生豆约含有200种芳香物质，烘焙完成的咖啡约含有800种以上的芳香物质，烘焙完成后的咖啡大约含有2%的二氧化碳。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">水分</h3>
+                    <p class="text-gray-700 mb-2">咖啡生豆的含水量在10~13%左右水分会降低烘焙热传导效率，如果咖啡含水低，可能会导致咖啡在烘焙过程中升温太快;如果水分含量过高，咖啡升温会减慢，烘焙过程中则需要提供更多热能，让多余的水分蒸发掉。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">有机酸</h3>
+                    <p class="text-gray-700 mb-2">咖啡还含有绿原酸、苹果酸、柠檬酸、奎宁酸、咖啡酸、乳酸、醋酸、甲酸等有机酸等是咖啡酸味的主要来源。其中绿原酸的含量最高，约占咖啡重量的7~10%绿原酸是咖啡中酸味、涩味和苦味的主要来源。罗布斯塔的绿原酸含量比阿拉比卡高，这是罗布斯塔苦味更高的原因之一。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">蛋白质</h3>
+                    <p class="text-gray-700 mb-2">约占咖啡重量的10~13%，氮基酸和还原糖是烘焙过程中美拉德反应的重要物质，美拉德反应产生的葡基氨和黑色素咖啡里的苦甜和香气的来源，也是咖啡颜色会变成褐色的原因,蛋白质还是卡路里的主要来源。</p>
+                </div>
+                <div class="bg-white p-8 rounded-lg shadow-md text-center">
+                    <h3 class="text-2xl font-semibold text-stone-800 mb-4">糖</h3>
+                    <p class="text-gray-700 mb-2">咖啡生豆所含的糖分主要是蔗糖，是咖啡甜味的主要来源。由于咖啡的焦糖化反应会生成一些酸的物质，糖分对于咖啡的酸味也有重要的影响。经过烘焙后大部分糖分会转化成焦糖使咖啡形成褐色，同时会产生香味的物质。</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
 
     <script>
         const navigationLinks = document.querySelectorAll('#navigation a');
@@ -418,7 +712,7 @@
                 e.preventDefault();
                 const targetId = this.getAttribute('href');
                 window.location.hash = targetId;
-                if (window.innerWidth < 768) { // md breakpoint
+                if (window.innerWidth < 768) {
                     sidebar.classList.add('-translate-x-full');
                 }
             });
@@ -428,7 +722,6 @@
             updateContent(window.location.hash || '#welcome');
         });
 
-        // Initial load
         updateContent(window.location.hash || '#welcome');
 
         menuToggle.addEventListener('click', () => {
@@ -452,12 +745,8 @@
 
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
-                tabButtons.forEach(btn => {
-                    btn.classList.remove('active');
-                    btn.setAttribute('aria-selected', 'false');
-                });
+                tabButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-                button.setAttribute('aria-selected', 'true');
                 
                 const targetPanelId = button.dataset.target;
                 tabPanels.forEach(panel => {
@@ -478,24 +767,24 @@
                     labels: ['风味丰富度', '醇厚度', '酸质', '甜感', '咖啡因含量'],
                     datasets: [{
                         label: '阿拉比卡',
-                        data: [4, 3, 4, 3, 2], // Max value is 4
+                        data: [4, 3, 4, 3, 2],
                         fill: true,
-                        backgroundColor: 'rgba(74, 222, 128, 0.2)', 
-                        borderColor: 'rgb(34, 197, 94)', 
-                        pointBackgroundColor: 'rgb(34, 197, 94)',
+                        backgroundColor: 'rgba(107, 142, 35, 0.2)', /* Olive Green */
+                        borderColor: '#6B8E23', 
+                        pointBackgroundColor: '#6B8E23',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(34, 197, 94)'
+                        pointHoverBorderColor: '#6B8E23'
                     }, {
                         label: '罗布斯塔',
-                        data: [2, 4, 1, 2, 4], // Max value is 4
+                        data: [2, 4, 1, 2, 4],
                         fill: true,
-                        backgroundColor: 'rgba(251, 146, 60, 0.2)', 
-                        borderColor: 'rgb(249, 115, 22)', 
-                        pointBackgroundColor: 'rgb(249, 115, 22)',
+                        backgroundColor: 'rgba(218, 165, 32, 0.2)', /* Goldenrod */
+                        borderColor: '#DAA520', 
+                        pointBackgroundColor: '#DAA520',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgb(249, 115, 22)'
+                        pointHoverBorderColor: '#DAA520'
                     }]
                 },
                 options: {
@@ -506,26 +795,26 @@
                       }
                     },
                     plugins: {
-                        legend: { labels: { color: '#44403c' } } 
+                        legend: { labels: { color: '#333333' } }
                     },
                     scales: {
                         r: {
+                            angleLines: { color: '#E0E0E0' },
+                            grid: { color: '#D0D0D0' },
+                            pointLabels: { font: { size: 14 }, color: '#555555' },
                             min: 0,
                             max: 5,
-                            angleLines: { color: '#d6d3d1' }, 
-                            grid: { color: '#e7e5e4' }, 
-                            pointLabels: { font: { size: 12 }, color: '#57534e' }, 
                             ticks: { 
-                                backdropColor: '#f5f5f4', 
-                                color: '#78716c',
+                                backdropColor: '#FDFDFD',
+                                color: '#7F8C8D',
                                 stepSize: 1,
                                 callback: function(value) {
-                                    if (Number.isInteger(value) && value >= 0 && value <= 5) { // Ensure ticks are integers in range
+                                    if (Number.isInteger(value) && value >= 0 && value <= 5) {
                                         return value;
                                     }
                                     return null; 
                                 }
-                            } 
+                            }
                         }
                     }
                 }
@@ -536,25 +825,34 @@
         let regionFlavorChart;
         const regionFlavorData = {
             americas: {
-                data: [3, 4, 3, 4, 3], 
-                description: "美洲产区：通常具有均衡的风味，带有坚果、巧克力、焦糖的甜感，酸度适中，口感柔和顺滑。"
+                data: [4, 4, 3, 2, 4], // 甜度, 醇厚度, 酸度, 苦味, 余韵 (根据三大产区风味分布图.jpg视觉估算)
+                description: "美洲产区：柔和平衡，坚果、黑巧克力、焦糖甜度。"
             },
             africa: {
-                data: [3, 2, 5, 4, 4], 
-                description: "非洲产区：以其明亮活泼的酸质和复杂多样的香气著称，常带有花香、果香（如柑橘、莓果）以及类似红酒的风味。"
+                data: [3, 2, 5, 1, 3], // 甜度, 醇厚度, 酸度, 苦味, 余韵 (根据三大产区风味分布图.jpg视觉估算)
+                description: "非洲产区：酸度突出，带有明亮的果酸、花香和果香。"
             },
             asia: {
-                data: [5, 4, 2, 2, 3], 
-                description: "亚洲产区：咖啡风味浓郁厚重，酸度较低，常带有泥土、草本、香料、木质等独特风味，口感扎实。"
+                data: [2, 5, 2, 4, 4], // 甜度, 醇厚度, 酸度, 苦味, 余韵 (根据三大产区风味分布图.jpg视觉估算)
+                description: "亚洲产区：质感醇厚，木质、药香和香料味。"
             }
         };
-        const flavorLabels = ['醇厚度', '香气复杂度', '酸质', '甜感', '余韵'];
+        const flavorLabels = ['甜度', '醇厚度', '酸度', '苦味', '余韵']; 
 
         function createOrUpdateRegionChart(regionKey) {
             const selectedRegion = regionFlavorData[regionKey];
             document.getElementById('region-flavor-description').textContent = selectedRegion.description;
 
+            document.querySelectorAll('.region-button').forEach(button => {
+                if (button.dataset.region === regionKey) {
+                    button.classList.add('active');
+                } else {
+                    button.classList.remove('active');
+                }
+            });
+
             if (regionFlavorChart) {
+                regionFlavorChart.data.labels = flavorLabels; 
                 regionFlavorChart.data.datasets[0].data = selectedRegion.data;
                 regionFlavorChart.data.datasets[0].label = document.querySelector(`.region-button[data-region="${regionKey}"]`).textContent;
                 regionFlavorChart.update();
@@ -567,30 +865,29 @@
                             label: document.querySelector(`.region-button[data-region="${regionKey}"]`).textContent,
                             data: selectedRegion.data,
                             fill: true,
-                            backgroundColor: 'rgba(161, 98, 7, 0.2)', 
-                            borderColor: 'rgb(161, 98, 7)',
-                            pointBackgroundColor: 'rgb(161, 98, 7)',
+                            backgroundColor: 'rgba(218, 165, 32, 0.2)', /* Goldenrod */
+                            borderColor: '#DAA520',
+                            pointBackgroundColor: '#DAA520',
                             pointBorderColor: '#fff',
                             pointHoverBackgroundColor: '#fff',
-                            pointHoverBorderColor: 'rgb(161, 98, 7)'
+                            pointHoverBorderColor: '#DAA520'
                         }]
                     },
                     options: {
-                         responsive: true,
-                         maintainAspectRatio: false,
+                        maintainAspectRatio: false,
                          elements: { line: { borderWidth: 3 } },
-                         plugins: { legend: { labels: { color: '#44403c' } } },
+                         plugins: { legend: { labels: { color: '#333333' } } },
                          scales: {
                             r: {
+                                angleLines: { color: '#E0E0E0' }, 
+                                grid: { color: '#D0D0D0' }, 
+                                pointLabels: { font: { size: 14 }, color: '#555555' }, 
                                 min: 0,
                                 max: 5,
-                                angleLines: { color: '#d6d3d1' }, 
-                                grid: { color: '#e7e5e4' }, 
-                                pointLabels: { font: { size: 12 }, color: '#57534e' }, 
                                 ticks: { 
-                                    backdropColor: '#f5f5f4', 
-                                    color: '#78716c', 
-                                    stepSize: 1,
+                                    backdropColor: '#FDFDFD',
+                                    color: '#7F8C8D', 
+                                    stepSize: 1, 
                                     callback: function(value) {
                                         if (Number.isInteger(value) && value >= 0 && value <= 5) {
                                             return value;
@@ -611,13 +908,17 @@
             });
         });
         
-        if (document.querySelector('.region-button[data-region="americas"]')) {
-             createOrUpdateRegionChart('americas'); // Initialize with Americas data if the button exists
-        } else if (regionFlavorCtx) { // Fallback if no buttons exist but canvas does (e.g. to show empty chart or default)
-            // Optionally, initialize with a default state or leave blank
-            console.warn("Region buttons not found, regionFlavorChart might not initialize with data.");
-        }
+        const originalUpdateContent = updateContent;
+        updateContent = function(hash) {
+            originalUpdateContent(hash);
+            if (hash === '#regions') {
+                setTimeout(() => createOrUpdateRegionChart('americas'), 100); 
+            }
+        };
 
+        if (window.location.hash === '#regions') {
+            setTimeout(() => createOrUpdateRegionChart('americas'), 100);
+        }
     </script>
 </body>
 </html>
