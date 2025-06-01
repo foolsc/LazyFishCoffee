@@ -22,7 +22,7 @@
             - Brewing: Textual descriptions of various brewing methods with placeholder images. Goal: Inform. Method: Structured text with visual cues.
             CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. */
 
-        body {
+        body { 
             font-family: 'Montserrat', sans-serif; /* Main body font */
             background-color: #FDFDFD; /* Light cream background */
             color: #333333; /* Dark charcoal text */
@@ -66,8 +66,7 @@
             background-color: #ffffff; /* Clean white background for content cards */
             border-radius: 16px; /* Larger, softer rounded corners */
             box-shadow: 0 8px 30px rgba(0,0,0,0.1); /* More pronounced, softer shadow */
-            /* Responsive padding: p-6 (1.5rem) for small, sm:p-8 (2rem) for medium, md:p-12 (3rem) for large */
-            padding: 1.5rem; /* Default for mobile */
+            padding: 3rem; /* Generous padding */
             margin-bottom: 2.5rem; /* Increased bottom margin */
             animation: fadeIn 0.6s ease-out forwards; /* Fade-in animation */
         }
@@ -78,19 +77,6 @@
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
         }
-
-        /* Apply responsive padding to content-section */
-        @media (min-width: 640px) { /* sm breakpoint */
-            .content-section {
-                padding: 2rem;
-            }
-        }
-        @media (min-width: 768px) { /* md breakpoint */
-            .content-section {
-                padding: 3rem;
-            }
-        }
-
 
         /* Primary Button Style */
         .primary-button {
@@ -108,7 +94,7 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 20px rgba(218,165,32,0.6);
         }
-
+        
         /* Region Button Style (for Radar Chart selection) */
         .region-button {
             background-color: #E0E0E0; /* Light gray */
@@ -180,25 +166,13 @@
             background-color: #ffffff;
             border-radius: 16px;
             box-shadow: 0 10px 35px rgba(0,0,0,0.4);
-            /* Responsive padding for popup */
-            padding: 1.5rem; /* Default for mobile */
-        }
-        @media (min-width: 640px) { /* sm breakpoint */
-            .popup-content {
-                padding: 2rem;
-            }
-        }
-        @media (min-width: 768px) { /* md breakpoint */
-            .popup-content {
-                padding: 3rem;
-            }
+            padding: 3rem;
         }
 
         /* Chart Container Styling */
         .chart-container {
             position: relative;
-            /* Responsive height: h-96 (24rem/384px) for mobile, md:h-112 (28rem/448px) for medium, lg:h-128 (32rem/512px) for large */
-            height: 24rem; /* Default height for mobile (h-96) */
+            height: 450px; /* Increased height for better visual impact */
             width: 100%;
             padding: 1.5rem;
             background-color: #ffffff;
@@ -212,18 +186,6 @@
             max-width: 100%;
             max-height: 100%;
         }
-        /* Apply responsive height to chart-container */
-        @media (min-width: 768px) { /* md breakpoint */
-            .chart-container {
-                height: 28rem; /* md:h-112 */
-            }
-        }
-        @media (min-width: 1024px) { /* lg breakpoint */
-            .chart-container {
-                height: 32rem; /* lg:h-128 */
-            }
-        }
-
     </style>
 </head>
 <body class="bg-gray-100 flex flex-col md:flex-row min-h-screen">
@@ -343,6 +305,39 @@
             </div>
         </section>
 
+        <!--
+        <section id="cherry" class="content-section hidden">
+            <h2 class="text-3xl font-bold text-stone-800 mb-6">咖啡豆来源及结构</h2>
+            <p class="text-lg leading-relaxed text-gray-700 mb-6">
+                咖啡豆来自于咖啡树（属于茜草科）结的果实，又称‘咖啡樱桃’的果核。咖啡鲜果结构分为外果皮、果肉、果胶、羊皮纸（果壳）、银皮、果核（咖啡豆）、胚芽。点击图片中的不同部分，了解其详细信息。
+            </p>
+            <div class="flex justify-center items-center mb-8 relative" style="height: 450px;">
+                <img src="assets/images/coffee_cherry_structure.jpg" alt="咖啡樱桃结构图" class="max-w-full h-auto rounded-lg shadow-xl">
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 100px; height: 100px; top: 80px; left: 100px;" 
+                     onclick="showLayerInfo('外果皮 (Outer Skin)', '外果皮就是整颗咖啡果实里，最靠外边的物质了。它由1-2层细胞构成，结构与生物表皮十分相似，具有角质层和气孔。当咖啡果实还没有成熟前，果皮的薄壁稀薄会含有大量的叶绿体，然后待到果实成熟时，会转变为有色体，颜色从原来的青绿渐渐转变为红色。果实越熟，颜色越深。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 90px; height: 90px; top: 120px; left: 180px;" 
+                     onclick="showLayerInfo('果肉 (Pulp/Mesocarp)', '咖啡果肉是属于果皮的一部分，因为它是由植物的子房壁发育出来的。而咖啡果肉含有大量的糖分及酸类物质，人们常说的咖啡嚼起来很甜，说的就是来自果皮和果肉提供的糖分。但由于它和果皮一样，非常薄，所以初尝咖啡果的朋友很容易一口就咬到咖啡豆上。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 80px; height: 80px; top: 160px; left: 260px;" 
+                     onclick="showLayerInfo('果胶层 (Pectin layer/Mucilage)', '当移除了果皮果肉以后，可以在咖啡豆上看到一层透明的黏状物，这就是果胶层。果胶层难溶于水，且因为它的含糖量最高，所以触感黏腻，且易氧化，在将咖啡果肉移除的短暂几分钟里，果胶就会由透明逐渐转为黄色。果胶层是处理发酵时重要的组成部分，以蜜处理为例，果胶保留越多，参与发酵的物质就越多，这会让咖啡豆获得更高的甜感、酵感。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 70px; height: 70px; top: 200px; left: 340px;" 
+                     onclick="showLayerInfo('羊皮纸 (Parchment coat)', '咖啡豆外表会附有一层羊皮纸，这是由薄壁细胞组成的。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 60px; height: 60px; top: 240px; left: 420px;" 
+                     onclick="showLayerInfo('银皮 (Silver skin/Chaff)', '银皮夹杂在羊皮层和咖啡豆之间，是一层薄如蝉翼的细胞质膜。它会在咖啡豆处理、烘焙时进行脱落。它也是区别日晒、水洗处理咖啡豆的一大特征。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 50px; height: 50px; top: 280px; left: 500px;" 
+                     onclick="showLayerInfo('果核/咖啡豆 (Bean/Endosperm)', '咖啡豆既是咖啡的制作原材料，同时还是咖啡树的种子。通常来说，一颗咖啡果实会孕育出两颗咖啡豆，它们有一面是平坦的，会相贴在一起。值得注意的是，如果咖啡果实在生长过程中，出现了发育不良的情况，很有可能只会孵化出一颗没有平面的椭圆形咖啡豆。为了将这两种不同的情况区别开来，于是人们便将没有平面的圆形豆子称之为：圆豆/珠粒；正常孵化出来且带有平面的豆子则被称为：扁豆/平豆。')"></div>
+                <div class="coffee-cherry-part absolute bg-green-500 opacity-20 rounded-full" style="width: 40px; height: 40px; top: 320px; left: 580px;" 
+                     onclick="showLayerInfo('芽胚 (Center cut)', '咖啡豆中间裂开的地方属于胚芽部分，突破咖啡种子的皮后会发育成叶和茎。')"></div>
+            </div>
+
+            <div id="layer-info-popup" class="popup-overlay hidden fixed inset-0 flex items-center justify-center z-50">
+                <div class="popup-content bg-white p-10 rounded-lg max-w-lg w-full text-center relative">
+                    <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-light" onclick="document.getElementById('layer-info-popup').classList.add('hidden');">&times;</button>
+                    <h3 id="layer-name" class="text-3xl font-bold mb-4 text-stone-800"></h3>
+                    <p id="layer-description" class="text-gray-700 text-lg leading-relaxed"></p>
+                </div>
+            </div>
+        </section> -->
+
         <section id="cherry" class="content-section p-6 md:p-10 bg-gray-50 rounded-lg shadow-lg">
             <h2 class="text-4xl font-playfair-display text-gray-800 mb-8 text-center">咖啡樱桃的结构</h2>
             <p class="text-gray-700 text-lg leading-relaxed max-w-3xl mx-auto mb-8 text-center">
@@ -356,8 +351,7 @@
 
                 <div class="md:w-1/2">
                     <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center md:text-left">主要结构：</h3>
-                    <ul class="space-y-3">
-                        <li class="oneclick bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer text-gray-700 text-lg" data-part="outer-skin">
+                    <ul class="space-y-3"> <li class="oneclick bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer text-gray-700 text-lg" data-part="outer-skin">
                             <span class="font-medium text-amber-700 mr-2">1. 外果皮 (Exocarp / Outer Skin):</span> 咖啡樱桃最外层的皮肤。
                         </li>
                         <li class="oneclick bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer text-gray-700 text-lg" data-part="pulp">
@@ -561,6 +555,7 @@
             </div>
 
             <div class="bg-white p-8 rounded-lg shadow-md mb-8 chart-container">
+                <!-- <p id="region-flavor-description" class="text-gray-700 mb-6 text-center text-lg font-medium w-full mx-[-6]">选择一个产区查看其风味特征。</p> -->
                 <canvas id="regionFlavorChart"></canvas>
             </div>
 
@@ -569,7 +564,7 @@
                     选择一个产区查看其风味特征。
                 </p>
             </div>
-
+            <!-- 新添加的内容  用以调整文字展示-->
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 <div class="bg-white p-8 rounded-lg shadow-md">
                     <h3 class="text-2xl font-semibold text-stone-800 mb-4">美洲产区——坚果醇香代表</h3>
@@ -606,7 +601,7 @@
                     <h3 class="text-2xl font-semibold text-stone-800 mb-4">香气 (Fragrance & Aroma)</h3>
                     <p class="text-gray-700 mb-3">香气是咖啡品尝中最早感知的咖啡风味，可以分为干香和湿香。</p>
                     <p class="text-gray-700 mb-3"><strong>干香（Fragrance）</strong>描述的是新鲜烘焙咖啡豆及其研磨时所散发的独特气息，此类气息常被赞誉为“香气”。</p>
-                    <p class="text-700 mb-3"><strong>湿香（Aroma）</strong>则指咖啡在萃取过程中和过程后，由产生的咖啡液释放出的诱人香味，这一感官体验常被称作“香味”。</p>
+                    <p class="text-gray-700 mb-3"><strong>湿香（Aroma）</strong>则指咖啡在萃取过程中和过程后，由产生的咖啡液释放出的诱人香味，这一感官体验常被称作“香味”。</p>
                     <p class="text-gray-700"><strong>常见描述</strong>：花香：玫瑰、茉莉、肉桂、豆蔻、薄荷等。果香：柑橘、橙子、柠檬、葡萄、草莓、树莓等。</p>
                     <p class="text-gray-700 mt-3 italic text-sm">负面味道：烟草味、汽油味、焦炭味、泥土味。</p>
                 </div>
@@ -765,7 +760,7 @@
                 }
             });
         }
-
+        
         navigationLinks.forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
@@ -786,7 +781,7 @@
         menuToggle.addEventListener('click', () => {
             sidebar.classList.toggle('-translate-x-full');
         });
-
+        
         document.addEventListener('click', (event) => {
             if (window.innerWidth < 768 && !sidebar.contains(event.target) && !menuToggle.contains(event.target) && !sidebar.classList.contains('-translate-x-full')) {
                 sidebar.classList.add('-translate-x-full');
@@ -794,9 +789,9 @@
         });
 
         function showLayerInfo(name, description) {
-            document.getElementById('popup-title').textContent = name;
-            document.getElementById('popup-description').textContent = description;
-            document.getElementById('cherry-popup').classList.remove('hidden');
+            document.getElementById('layer-name').textContent = name;
+            document.getElementById('layer-description').textContent = description;
+            document.getElementById('layer-info-popup').classList.remove('hidden');
         }
 
         const tabButtons = document.querySelectorAll('.tab-button');
@@ -806,7 +801,7 @@
             button.addEventListener('click', () => {
                 tabButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
-
+                
                 const targetPanelId = button.dataset.target;
                 tabPanels.forEach(panel => {
                     if (panel.id === targetPanelId) {
@@ -829,7 +824,7 @@
                         data: [4, 3, 4, 3, 2],
                         fill: true,
                         backgroundColor: 'rgba(107, 142, 35, 0.2)', /* Olive Green */
-                        borderColor: '#6B8E23',
+                        borderColor: '#6B8E23', 
                         pointBackgroundColor: '#6B8E23',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
@@ -839,7 +834,7 @@
                         data: [2, 4, 1, 2, 4],
                         fill: true,
                         backgroundColor: 'rgba(218, 165, 32, 0.2)', /* Goldenrod */
-                        borderColor: '#DAA520',
+                        borderColor: '#DAA520', 
                         pointBackgroundColor: '#DAA520',
                         pointBorderColor: '#fff',
                         pointHoverBackgroundColor: '#fff',
@@ -863,7 +858,7 @@
                             pointLabels: { font: { size: 14 }, color: '#555555' },
                             min: 0,
                             max: 5,
-                            ticks: {
+                            ticks: { 
                                 backdropColor: '#FDFDFD',
                                 color: '#7F8C8D',
                                 stepSize: 1,
@@ -871,7 +866,7 @@
                                     if (Number.isInteger(value) && value >= 0 && value <= 5) {
                                         return value;
                                     }
-                                    return null;
+                                    return null; 
                                 }
                             }
                         }
@@ -896,7 +891,7 @@
                 description: "亚洲产区：质感醇厚，木质、药香和香料味。"
             }
         };
-        const flavorLabels = ['甜度', '醇厚度', '酸度', '苦味', '余韵'];
+        const flavorLabels = ['甜度', '醇厚度', '酸度', '苦味', '余韵']; 
 
         function createOrUpdateRegionChart(regionKey) {
             const selectedRegion = regionFlavorData[regionKey];
@@ -911,7 +906,7 @@
             });
 
             if (regionFlavorChart) {
-                regionFlavorChart.data.labels = flavorLabels;
+                regionFlavorChart.data.labels = flavorLabels; 
                 regionFlavorChart.data.datasets[0].data = selectedRegion.data;
                 regionFlavorChart.data.datasets[0].label = document.querySelector(`.region-button[data-region="${regionKey}"]`).textContent;
                 regionFlavorChart.update();
@@ -938,40 +933,40 @@
                          plugins: { legend: { labels: { color: '#333333' } } },
                          scales: {
                             r: {
-                                angleLines: { color: '#E0E0E0' },
-                                grid: { color: '#D0D0D0' },
-                                pointLabels: { font: { size: 14 }, color: '#555555' },
+                                angleLines: { color: '#E0E0E0' }, 
+                                grid: { color: '#D0D0D0' }, 
+                                pointLabels: { font: { size: 14 }, color: '#555555' }, 
                                 min: 0,
                                 max: 5,
-                                ticks: {
+                                ticks: { 
                                     backdropColor: '#FDFDFD',
-                                    color: '#7F8C8D',
-                                    stepSize: 1,
+                                    color: '#7F8C8D', 
+                                    stepSize: 1, 
                                     callback: function(value) {
                                         if (Number.isInteger(value) && value >= 0 && value <= 5) {
                                             return value;
                                         }
-                                        return null;
+                                        return null; 
                                     }
-                                }
+                                } 
                             }
                         }
                     }
                 });
             }
         }
-
+        
         document.querySelectorAll('.region-button').forEach(button => {
             button.addEventListener('click', () => {
                 createOrUpdateRegionChart(button.dataset.region);
             });
         });
-
+        
         const originalUpdateContent = updateContent;
         updateContent = function(hash) {
             originalUpdateContent(hash);
             if (hash === '#regions') {
-                setTimeout(() => createOrUpdateRegionChart('americas'), 100);
+                setTimeout(() => createOrUpdateRegionChart('americas'), 100); 
             }
         };
 
