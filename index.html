@@ -305,6 +305,7 @@
             </div>
         </section>
 
+        <!--
         <section id="cherry" class="content-section hidden">
             <h2 class="text-3xl font-bold text-stone-800 mb-6">咖啡豆来源及结构</h2>
             <p class="text-lg leading-relaxed text-gray-700 mb-6">
@@ -333,6 +334,53 @@
                     <button class="absolute top-4 right-4 text-gray-500 hover:text-gray-800 text-3xl font-light" onclick="document.getElementById('layer-info-popup').classList.add('hidden');">&times;</button>
                     <h3 id="layer-name" class="text-3xl font-bold mb-4 text-stone-800"></h3>
                     <p id="layer-description" class="text-gray-700 text-lg leading-relaxed"></p>
+                </div>
+            </div>
+        </section> -->
+
+        <section id="cherry" class="content-section p-6 md:p-10 bg-gray-50 rounded-lg shadow-lg">
+            <h2 class="text-4xl font-playfair-display text-gray-800 mb-8 text-center">咖啡樱桃的结构</h2>
+            <p class="text-gray-700 text-lg leading-relaxed max-w-3xl mx-auto mb-8 text-center">
+                咖啡樱桃（Coffee Cherry）是咖啡树的果实，其内部结构复杂，每个部分都在咖啡的生长和加工过程中扮演着独特的角色。
+            </p>
+
+            <div class="flex flex-col md:flex-row items-center md:items-start md:justify-center gap-8 md:gap-12 mb-8">
+                <div class="md:w-1/2 flex justify-center">
+                    <img src="assets/images/coffee_cherry_structure.jpg" alt="咖啡樱桃结构图" class="w-full h-auto max-w-md rounded-lg shadow-md">
+                </div>
+
+                <div class="md:w-1/2">
+                    <h3 class="text-2xl font-semibold text-gray-800 mb-4 text-center md:text-left">主要结构：</h3>
+                    <ul class="space-y-3"> <li class="oneclick bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer text-gray-700 text-lg" data-part="outer-skin">
+                            <span class="font-medium text-amber-700 mr-2">1. 外果皮 (Exocarp / Outer Skin):</span> 咖啡樱桃最外层的皮肤。
+                        </li>
+                        <li class="oneclick bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer text-gray-700 text-lg" data-part="pulp">
+                            <span class="font-medium text-amber-700 mr-2">2. 果肉 (Mesocarp / Pulp):</span> 位于外果皮下方，甜而黏的果肉层。
+                        </li>
+                        <li class="oneclick bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer text-gray-700 text-lg" data-part="parchment">
+                            <span class="font-medium text-amber-700 mr-2">3. 内果皮 (Endocarp / Parchment):</span> 坚硬的保护层，包裹着咖啡豆，干燥后如羊皮纸。
+                        </li>
+                        <li class="oneclick bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer text-gray-700 text-lg" data-part="silver-skin">
+                            <span class="font-medium text-amber-700 mr-2">4. 银皮 (Epidermis / Silver Skin):</span> 紧贴在咖啡豆表面的薄膜，烘焙后通常会脱落。
+                        </li>
+                        <li class="oneclick bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer text-gray-700 text-lg" data-part="coffee-bean">
+                            <span class="font-medium text-amber-700 mr-2">5. 咖啡豆 (Endosperm / Coffee Bean):</span> 咖啡的核心，通常每颗樱桃有两粒，是最终用于烘焙的部分。
+                        </li>
+                        <li class="oneclick bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer text-gray-700 text-lg" data-part="center-cut">
+                            <span class="font-medium text-amber-700 mr-2">6. 中缝 (Center Cut):</span> 咖啡豆平坦一侧中间的凹槽。
+                        </li>
+                        <li class="oneclick bg-white p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow cursor-pointer text-gray-700 text-lg" data-part="mucilage">
+                            <span class="font-medium text-amber-700 mr-2">7. 果胶层 (Mucilage):</span> 位于果肉和内果皮之间，是处理过程中需要去除的粘液层。
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div id="cherry-popup" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50 hidden">
+                <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full relative">
+                    <h3 id="popup-title" class="text-2xl font-semibold mb-4 text-gray-800"></h3>
+                    <p id="popup-description" class="text-gray-700 leading-relaxed mb-4"></p>
+                    <button class="absolute top-3 right-3 text-gray-500 hover:text-gray-700 text-2xl" onclick="document.getElementById('cherry-popup').classList.add('hidden');">&times;</button>
                 </div>
             </div>
         </section>
